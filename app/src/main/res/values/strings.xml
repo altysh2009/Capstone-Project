@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">News</string>
+    <string name="action_settings">Setting</string>
+
+    <string name="business_key">business</string>
+    <string name="entertainment_key">entertainment</string>
+    <string name="gaming_key">gaming</string>
+    <string name="music_key">music</string>
+    <string name="politics_key">politics</string>
+    <string name="science_and_nature_key">science-and-nature</string>
+    <string name="sport_key">sport</string>
+    <string name="technology_key">technology</string>
+
+    <string name="lan_name">Langue</string>
+    <string name="lan_key">lang</string>
+    <string name="english_key">en</string>
+    <string name="deutsch_key">de</string>
+    <string name="french_key">fr</string>
+
+    <string name="australia_key">au</string>
+    <string name="germany_key">de</string>
+    <string name="united_kingdom_key">gb</string>
+    <string name="india_key">in</string>
+    <string name="italy_key">it</string>
+    <string name="united_states_key">us</string>
+    <string name="title_activity_setting_activiy">SettingActiviy</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="appwidget_text">NewsSpi</string>
+    <string name="add_widget">Add widget</string>
+    <string name="appwidget_error">No News Loaded</string>
+
+
+</resources>

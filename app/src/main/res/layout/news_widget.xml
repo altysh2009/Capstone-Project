@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+
+    >
+
+    <TextView
+        android:id="@+id/appwidget_text"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:background="#09C"
+        android:contentDescription="@string/appwidget_text"
+
+        android:elevation="4dp"
+        android:paddingLeft="8dp"
+        android:paddingStart="8dp"
+        android:text="@string/appwidget_text"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/list_item_widget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingLeft="8dp"
+        android:paddingStart="8dp"
+        tools:listitem="@layout/news_widget_item" />
+
+    <TextView
+        android:id="@+id/appwidget_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingStart="8dp"
+        android:text="@string/appwidget_error"
+        android:textSize="24sp"
+        android:textStyle="bold|italic" />
+
+</LinearLayout>
