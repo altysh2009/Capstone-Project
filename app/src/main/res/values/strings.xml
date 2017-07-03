@@ -3,7 +3,7 @@
     <string name="multi_select_menu_key">mlti_select_sources</string>
     <string name="multi_select_menu_summry">choose the sources you want</string>
     <string name="multi_select_menu_title">Sources</string>
-    <string-array name="empty_array" />
+
 
     <string name="app_name">News</string>
     <string name="action_settings">Setting</string>
@@ -11,17 +11,30 @@
     <string name="business_key">business</string>
     <string name="entertainment_key">entertainment</string>
     <string name="gaming_key">gaming</string>
-    <string name="music_key">music</string>
     <string name="politics_key">politics</string>
     <string name="science_and_nature_key">science-and-nature</string>
     <string name="sport_key">sport</string>
-    <string name="technology_key">technology</string>
+    <string name="technology_name">Technology</string>
+    <string name="business_name">Business</string>
+    <string name="entertainment_name">Entertainment</string>
+    <string name="gaming_name">Gaming</string>
+    <string name="politics_name">Politics</string>
+    <string name="science_and_nature_name">Science-and-Nature</string>
+    <string name="sport_name">Sport</string>
+    <string name="technology_key">Technology</string>
+    <string name="category_title">Category</string>
+    <string name="category_key">category</string>
+    <string name="category_summery">choose your preferred Categories</string>
 
-    <string name="lan_name">Langue</string>
+    <string name="lan_name">Languages</string>
     <string name="lan_key">lang</string>
     <string name="english_key">en</string>
+    <string name="english_value">English</string>
     <string name="deutsch_key">de</string>
+    <string name="deutsch_value">Detach</string>
     <string name="french_key">fr</string>
+    <string name="french_value">French</string>
+    <string name="lan_sumaray">Choose your preferred Languages</string>
 
     <string name="australia_key">au</string>
     <string name="germany_key">de</string>
@@ -29,6 +42,16 @@
     <string name="india_key">in</string>
     <string name="italy_key">it</string>
     <string name="united_states_key">us</string>
+    <string name="australia_name">Australia</string>
+    <string name="germany_name">Germany</string>
+    <string name="united_kingdom_name">United kingdom</string>
+    <string name="india_name">India</string>
+    <string name="italy_name">Italy</string>
+    <string name="united_states_name">United States</string>
+    <string name="country_name">Countries</string>
+    <string name="country_key">countries</string>
+    <string name="country_summry">Choose your preferred Countries</string>
+
     <string name="title_activity_setting_activiy">SettingActiviy</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -37,6 +60,30 @@
     <string name="appwidget_text">NewsSpi</string>
     <string name="add_widget">Add widget</string>
     <string name="appwidget_error">No News Loaded</string>
+
+    <string name="notifications_key">notfi</string>
+    <string name="notifications_title">News Notifications</string>
+    <string name="notifications_summry">Check for Update Notifications </string>
+
+    <string name="see_first_key">see_first</string>
+    <string name="see_first_title">See First</string>
+    <string name="see_first_sammry">What To See First</string>
+    <string name="latest_key">latest</string>
+    <string name="latest_name">Latest News</string>
+    <string name="top_key">top</string>
+    <string name="top_name">Top News</string>
+    <string name="popular_key">popular</string>
+    <string name="popular_name">Popular News</string>
+
+    <string name="backed_up_data_title">Backup data</string>
+    <string name="backed_up_data_sammry">How Much Data To Backup</string>
+    <string name="backed_up_data_key">day</string>
+    <string name="backed_up_data_three_days_key">3days</string>
+    <string name="backed_up_data_two_weeks_key">14days</string>
+    <string name="backed_up_data_month_key">30days</string>
+    <string name="backed_up_data_three_days_name">3 days</string>
+    <string name="backed_up_data_two_weeks_name">14 days</string>
+    <string name="backed_up_data_month_name">30 days</string>
 
 
 </resources>

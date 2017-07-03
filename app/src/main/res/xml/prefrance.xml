@@ -8,4 +8,56 @@
         android:persistent="true"
         android:summary="@string/multi_select_menu_summry"
         android:title="@string/multi_select_menu_title" />
+    <MultiSelectListPreference
+        android:defaultValue="@array/sources_defult"
+        android:enabled="true"
+        android:entries="@array/languge_names"
+        android:entryValues="@array/languge_values"
+        android:key="@string/lan_key"
+        android:persistent="true"
+        android:summary="@string/lan_sumaray"
+        android:title="@string/lan_name" />
+    <MultiSelectListPreference
+        android:defaultValue="@array/sources_defult"
+        android:enabled="true"
+        android:entries="@array/category_names"
+        android:entryValues="@array/category_values"
+        android:key="@string/category_title"
+        android:persistent="true"
+        android:summary="@string/category_summery"
+        android:title="@string/category_title" />
+    <MultiSelectListPreference
+        android:defaultValue="@array/sources_defult"
+        android:enabled="true"
+        android:entries="@array/countries_names"
+        android:entryValues="@array/countries_values"
+        android:key="@string/country_key"
+        android:persistent="true"
+        android:summary="@string/country_summry"
+        android:title="@string/country_name" />
+    <ListPreference
+        android:defaultValue="@array/sources_defult"
+        android:enabled="true"
+        android:entries="@array/see_first_names"
+        android:entryValues="@array/see_first_values"
+        android:key="@string/see_first_key"
+        android:persistent="true"
+        android:summary="@string/see_first_sammry"
+        android:title="@string/see_first_title" />
+    <ListPreference
+        android:defaultValue="@array/sources_defult"
+        android:enabled="true"
+        android:entries="@array/backed_up_data_names"
+        android:entryValues="@array/backed_up_data_values"
+        android:key="@string/backed_up_data_key"
+        android:persistent="true"
+        android:summary="@string/backed_up_data_sammry"
+        android:title="@string/backed_up_data_title" />
+
+    <CheckBoxPreference
+        android:enabled="true"
+        android:key="@string/notifications_key"
+        android:summary="@string/notifications_summry"
+        android:title="@string/notifications_title" />
+
 </PreferenceScreen>
