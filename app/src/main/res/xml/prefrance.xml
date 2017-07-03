@@ -4,10 +4,10 @@
         android:defaultValue="@array/sources_defult"
         android:enabled="true"
 
-        android:key="@string/multi_select_menu_key"
+        android:key="@string/sources"
         android:persistent="true"
-        android:summary="@string/multi_select_menu_summry"
-        android:title="@string/multi_select_menu_title" />
+        android:summary="@string/sources_summry"
+        android:title="@string/sources_title" />
     <MultiSelectListPreference
         android:defaultValue="@array/sources_defult"
         android:enabled="true"

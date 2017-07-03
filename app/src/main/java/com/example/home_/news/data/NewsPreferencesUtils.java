@@ -19,6 +19,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.example.home_.news.R;
+
 
 public final class NewsPreferencesUtils {
 
@@ -35,7 +37,16 @@ public final class NewsPreferencesUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putString(PREF_LAN, lang);
+        editor.putString(context.getString(R.string.lan_key), lang);
+
+        editor.apply();
+    }
+
+    public static void setSources(Context context, String lang) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        editor.putString(context.getString(R.string.sources_key), lang);
 
         editor.apply();
     }
@@ -43,7 +54,7 @@ public final class NewsPreferencesUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putString(PREF_Contreys, contrey);
+        editor.putString(context.getString(R.string.country_key), contrey);
 
         editor.apply();
     }
@@ -51,7 +62,7 @@ public final class NewsPreferencesUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putString(PREF_Catgory, catgory);
+        editor.putString(context.getString(R.string.category_key), catgory);
 
         editor.apply();
     }
@@ -59,7 +70,7 @@ public final class NewsPreferencesUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putString(PREF_Catgory, sord);
+        editor.putString(context.getString(R.string.see_first_key), sord);
 
         editor.apply();
     }
@@ -79,29 +90,32 @@ public final class NewsPreferencesUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
 
-
-        return sp.getString(PREF_LAN, "");
+        return sp.getString(context.getString(R.string.lan_key), "");
     }
     public static String getPreferredCountry(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
 
-
-        return sp.getString(PREF_Contreys, "");
+        return sp.getString(context.getString(R.string.country_key), "");
     }
     public static String getPreferredCatgory(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
 
-
-        return sp.getString(PREF_Catgory, "");
+        return sp.getString(context.getString(R.string.category_key), "");
     }
     public static String getPreferredSeeFirst(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
 
+        return sp.getString(context.getString(R.string.see_first_key), "");
+    }
 
-        return sp.getString(PREF_sordBy, "");
+    public static String getPreferredSources(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+
+
+        return sp.getString(context.getString(R.string.sources_key), "");
     }
 
 

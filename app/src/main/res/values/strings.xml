@@ -85,5 +85,9 @@
     <string name="backed_up_data_two_weeks_name">14 days</string>
     <string name="backed_up_data_month_name">30 days</string>
 
+    <string name="sources_title">Sources</string>
+    <string name="sources_summry">Choose your preferred Countries</string>
+    <string name="sources_key">sources</string>
+
 
 </resources>
