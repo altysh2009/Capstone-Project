@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(getApplicationContext(), SettingActiviy.class));
+            startActivity(new Intent(getApplicationContext(), NewsPrefranceActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

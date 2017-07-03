@@ -1,4 +1,10 @@
 <resources>
+    <string name="ematy_Value">No Sources Available</string>
+    <string name="multi_select_menu_key">mlti_select_sources</string>
+    <string name="multi_select_menu_summry">choose the sources you want</string>
+    <string name="multi_select_menu_title">Sources</string>
+    <string-array name="empty_array" />
+
     <string name="app_name">News</string>
     <string name="action_settings">Setting</string>
 

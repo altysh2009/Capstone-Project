@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <MultiSelectListPreference
+        android:defaultValue="@array/sources_defult"
+        android:enabled="true"
+
+        android:key="@string/multi_select_menu_key"
+        android:persistent="true"
+        android:summary="@string/multi_select_menu_summry"
+        android:title="@string/multi_select_menu_title" />
+</PreferenceScreen>

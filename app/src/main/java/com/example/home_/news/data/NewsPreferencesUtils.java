@@ -19,10 +19,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.example.home_.news.R;
 
-
-public final class NewsPreferences {
+public final class NewsPreferencesUtils {
 
 
 
