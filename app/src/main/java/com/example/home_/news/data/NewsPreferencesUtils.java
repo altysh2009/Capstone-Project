@@ -21,6 +21,10 @@ import android.preference.PreferenceManager;
 
 import com.example.home_.news.R;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 
 public final class NewsPreferencesUtils {
 
@@ -37,7 +41,9 @@ public final class NewsPreferencesUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putString(context.getString(R.string.lan_key), lang);
+
+        Set<String> set = new HashSet<String>(Arrays.asList(lang.split(" ")));
+        editor.putStringSet(context.getString(R.string.lan_key), set);
 
         editor.apply();
     }
@@ -46,23 +52,24 @@ public final class NewsPreferencesUtils {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putString(context.getString(R.string.sources_key), lang);
-
+        Set<String> set = new HashSet<String>(Arrays.asList(lang.split(" ")));
+        editor.putStringSet(context.getString(R.string.sources_key), set);
         editor.apply();
     }
     public static void setPrefConterys(Context context,String contrey) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putString(context.getString(R.string.country_key), contrey);
-
+        Set<String> set = new HashSet<String>(Arrays.asList(contrey.split(" ")));
+        editor.putStringSet(context.getString(R.string.country_key), set);
         editor.apply();
     }
     public static void setPrefCatgory(Context context,String catgory) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putString(context.getString(R.string.category_key), catgory);
+        Set<String> set = new HashSet<String>(Arrays.asList(catgory.split(" ")));
+        editor.putStringSet(context.getString(R.string.category_key), set);
 
         editor.apply();
     }
@@ -86,11 +93,11 @@ public final class NewsPreferencesUtils {
 //    }
 
 
-    public static String getPreferredLang(Context context) {
+    public static Set<String> getPreferredLang(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
 
-        return sp.getString(context.getString(R.string.lan_key), "");
+        return sp.getStringSet(context.getString(R.string.lan_key), null);
     }
     public static String getPreferredCountry(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
@@ -98,11 +105,12 @@ public final class NewsPreferencesUtils {
 
         return sp.getString(context.getString(R.string.country_key), "");
     }
-    public static String getPreferredCatgory(Context context) {
+
+    public static Set<String> getPreferredCatgory(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
 
-        return sp.getString(context.getString(R.string.category_key), "");
+        return sp.getStringSet(context.getString(R.string.category_key), null);
     }
     public static String getPreferredSeeFirst(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
@@ -111,11 +119,11 @@ public final class NewsPreferencesUtils {
         return sp.getString(context.getString(R.string.see_first_key), "");
     }
 
-    public static String getPreferredSources(Context context) {
+    public static Set<String> getPreferredSources(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
 
-        return sp.getString(context.getString(R.string.sources_key), "");
+        return sp.getStringSet(context.getString(R.string.sources_key), null);
     }
 
 
