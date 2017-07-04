@@ -77,13 +77,11 @@
 
     <string name="backed_up_data_title">Backup data</string>
     <string name="backed_up_data_sammry">How Much Data To Backup</string>
-    <string name="backed_up_data_key">day</string>
-    <string name="backed_up_data_three_days_key">3days</string>
-    <string name="backed_up_data_two_weeks_key">14days</string>
-    <string name="backed_up_data_month_key">30days</string>
+
     <string name="backed_up_data_three_days_name">3 days</string>
     <string name="backed_up_data_two_weeks_name">14 days</string>
     <string name="backed_up_data_month_name">30 days</string>
+    <string name="backed_up_data_key">day</string>
 
     <string name="sources_title">Sources</string>
     <string name="sources_summry">Choose your preferred Countries</string>

@@ -3,21 +3,35 @@ package com.example.home_.news.wedgit;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.example.home_.news.MainActivity;
 import com.example.home_.news.R;
 import com.example.home_.news.WebViewActivity;
+import com.example.home_.news.data.NewsContract;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class NewsWidget extends AppWidgetProvider {
 
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+        if (NewsContract.update.equals(intent.getAction())) {
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                    new ComponentName(context, getClass()));
+            Log.d("update", "onReceive: ");
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_item_widget);
+        }
+    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="backed_up_data_key">1</integer>
+    <integer name="backed_up_data_three_days_key">3</integer>
+    <integer name="backed_up_data_two_weeks_key">14</integer>
+    <integer name="backed_up_data_month_key">30</integer>
+</resources>

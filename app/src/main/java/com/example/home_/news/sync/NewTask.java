@@ -4,6 +4,7 @@ package com.example.home_.news.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 
 import com.example.home_.news.NewSpi;
@@ -22,6 +23,11 @@ public class NewTask {
         if (c == null || c.getCount() == 0)
             getSources(context);
         getArticals(context);
+
+        Intent dataUpdatedIntent = new Intent(NewsContract.update);
+        context.sendBroadcast(dataUpdatedIntent);
+        if (c != null)
+            c.close();
 
     }
 

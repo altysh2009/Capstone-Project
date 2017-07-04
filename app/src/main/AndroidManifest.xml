@@ -53,6 +53,7 @@
         <receiver android:name=".wedgit.NewsWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="content://com.example.home_.news.data/update" />
             </intent-filter>
 
             <meta-data

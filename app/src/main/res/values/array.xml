@@ -67,10 +67,10 @@
 
     </array>
     <array name="backed_up_data_values">
-        <item>@string/backed_up_data_key</item>
-        <item>@string/backed_up_data_three_days_key</item>
-        <item>@string/backed_up_data_two_weeks_key</item>
-        <item>@string/backed_up_data_month_key</item>
+        <item>@integer/backed_up_data_key</item>
+        <item>@integer/backed_up_data_three_days_key</item>
+        <item>@integer/backed_up_data_two_weeks_key</item>
+        <item>@integer/backed_up_data_month_key</item>
 
     </array>
 </resources>

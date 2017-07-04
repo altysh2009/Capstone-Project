@@ -21,8 +21,6 @@ import android.preference.PreferenceManager;
 
 import com.example.home_.news.R;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -36,40 +34,40 @@ public final class NewsPreferencesUtils {
     public static final String PREF_sordBy ="see-first";
 
 
-
-    public static void setPrefLang(Context context,String lang) {
+    public static void setPrefLang(Context context, Set<String> lang) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
 
-        Set<String> set = new HashSet<String>(Arrays.asList(lang.split(" ")));
-        editor.putStringSet(context.getString(R.string.lan_key), set);
+        editor.putStringSet(context.getString(R.string.lan_key), lang);
 
         editor.apply();
     }
 
-    public static void setSources(Context context, String lang) {
+    public static void setSources(Context context, Set<String> lang) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        Set<String> set = new HashSet<String>(Arrays.asList(lang.split(" ")));
-        editor.putStringSet(context.getString(R.string.sources_key), set);
+        //Set<String> set = new HashSet<String>(Arrays.asList(lang.split(" ")));
+        editor.putStringSet(context.getString(R.string.sources_key), lang);
         editor.apply();
     }
-    public static void setPrefConterys(Context context,String contrey) {
+
+    public static void setPrefConterys(Context context, Set<String> contrey) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        Set<String> set = new HashSet<String>(Arrays.asList(contrey.split(" ")));
-        editor.putStringSet(context.getString(R.string.country_key), set);
+        //Set<String> set = new HashSet<String>(Arrays.asList(contrey.split(" ")));
+        editor.putStringSet(context.getString(R.string.country_key), contrey);
         editor.apply();
     }
-    public static void setPrefCatgory(Context context,String catgory) {
+
+    public static void setPrefCatgory(Context context, Set<String> catgory) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sp.edit();
 
-        Set<String> set = new HashSet<String>(Arrays.asList(catgory.split(" ")));
-        editor.putStringSet(context.getString(R.string.category_key), set);
+        //Set<String> set = new HashSet<String>(Arrays.asList(catgory.split(" ")));
+        editor.putStringSet(context.getString(R.string.category_key), catgory);
 
         editor.apply();
     }
@@ -78,6 +76,24 @@ public final class NewsPreferencesUtils {
         SharedPreferences.Editor editor = sp.edit();
 
         editor.putString(context.getString(R.string.see_first_key), sord);
+
+        editor.apply();
+    }
+
+    public static void setBackedData(Context context, int durtation) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        editor.putInt(context.getString(R.string.see_first_key), durtation);
+
+        editor.apply();
+    }
+
+    public static void setNotifacation(Context context, Boolean durtation) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        editor.putBoolean(context.getString(R.string.notifications_key), durtation);
 
         editor.apply();
     }
@@ -124,6 +140,21 @@ public final class NewsPreferencesUtils {
 
 
         return sp.getStringSet(context.getString(R.string.sources_key), null);
+    }
+
+    public static String getSeefirst(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getString(context.getString(R.string.see_first_key), null);
+    }
+
+    public static int getBackedData(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getInt(context.getString(R.string.sources_key), 7);
+    }
+
+    public static Boolean getNotifacation(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(context.getString(R.string.sources_key), false);
     }
 
 
