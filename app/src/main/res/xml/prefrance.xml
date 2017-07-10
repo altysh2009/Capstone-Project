@@ -3,13 +3,14 @@
     <MultiSelectListPreference
         android:defaultValue="@array/sources_defult"
         android:enabled="true"
+        android:entries="@array/sources_defult"
 
-        android:key="@string/sources"
+        android:key="@string/sources_key"
         android:persistent="true"
         android:summary="@string/sources_summry"
         android:title="@string/sources_title" />
     <MultiSelectListPreference
-        android:defaultValue="@array/sources_defult"
+        android:defaultValue="@array/languge_values"
         android:enabled="true"
         android:entries="@array/languge_names"
         android:entryValues="@array/languge_values"
@@ -18,16 +19,16 @@
         android:summary="@string/lan_sumaray"
         android:title="@string/lan_name" />
     <MultiSelectListPreference
-        android:defaultValue="@array/sources_defult"
+        android:defaultValue="@array/category_values"
         android:enabled="true"
         android:entries="@array/category_names"
         android:entryValues="@array/category_values"
-        android:key="@string/category_title"
+        android:key="@string/category_key"
         android:persistent="true"
         android:summary="@string/category_summery"
         android:title="@string/category_title" />
     <MultiSelectListPreference
-        android:defaultValue="@array/sources_defult"
+        android:defaultValue="@array/countries_values"
         android:enabled="true"
         android:entries="@array/countries_names"
         android:entryValues="@array/countries_values"
@@ -36,7 +37,7 @@
         android:summary="@string/country_summry"
         android:title="@string/country_name" />
     <ListPreference
-        android:defaultValue="@array/sources_defult"
+        android:defaultValue="@string/latest_key"
         android:enabled="true"
         android:entries="@array/see_first_names"
         android:entryValues="@array/see_first_values"
@@ -45,7 +46,7 @@
         android:summary="@string/see_first_sammry"
         android:title="@string/see_first_title" />
     <ListPreference
-        android:defaultValue="@array/sources_defult"
+        android:defaultValue="@string/backed_up_data_three_days_key"
         android:enabled="true"
         android:entries="@array/backed_up_data_names"
         android:entryValues="@array/backed_up_data_values"

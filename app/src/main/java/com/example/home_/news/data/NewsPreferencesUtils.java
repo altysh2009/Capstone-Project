@@ -115,11 +115,12 @@ public final class NewsPreferencesUtils {
 
         return sp.getStringSet(context.getString(R.string.lan_key), null);
     }
-    public static String getPreferredCountry(Context context) {
+
+    public static Set<String> getPreferredCountry(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
 
-        return sp.getString(context.getString(R.string.country_key), "");
+        return sp.getStringSet(context.getString(R.string.country_key), null);
     }
 
     public static Set<String> getPreferredCatgory(Context context) {
@@ -137,9 +138,10 @@ public final class NewsPreferencesUtils {
 
     public static Set<String> getPreferredSources(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> ss = sp.getStringSet(context.getString(R.string.sources_key), null);
+        //Log.d(ss.size()+"", "getPreferredSources: ");
 
-
-        return sp.getStringSet(context.getString(R.string.sources_key), null);
+        return ss;
     }
 
     public static String getSeefirst(Context context) {

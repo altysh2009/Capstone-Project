@@ -2,7 +2,6 @@ package com.example.home_.news.sync;
 
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,68 +9,143 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.example.home_.news.MainActivity;
+import com.example.home_.news.MyObject;
 import com.example.home_.news.R;
-import com.example.home_.news.data.NewsContract;
+import com.google.android.gms.ads.NativeExpressAdView;
 
-public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyceleAdpterMain.RecycelHolder> {
-    ReciveClick mReciveClick;
-    private Cursor c;
+import java.util.List;
+
+public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final int NewsDataViewType = 0;
+    private final int AddsViewType = 1;
+    private ReciveClick mReciveClick;
+    private List<Object> c;
     private Context context;
 
     public RecyceleAdpterMain(ReciveClick r) {
         mReciveClick = r;
     }
     @Override
-    public RecycelHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.list_item_main, parent, false);
-        return new RecycelHolder(view);
+        switch (viewType) {
+            case NewsDataViewType:
+                LayoutInflater inflater2 = LayoutInflater.from(context);
+                View view = inflater2.inflate(R.layout.list_item_main, parent, false);
+                return new RecycelHolder(view);
+            default:
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View nativeExpressLayoutView = inflater.inflate(R.layout.native_express_add_view, parent, false);
+                return new NativeExpressAdViewHolder(nativeExpressLayoutView);
+
+        }
+
+
+
     }
 
     @Override
-    public void onBindViewHolder(RecycelHolder holder, int position) {
-        if (c.moveToNext()) {
-            String auther_Name = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Author));
+    public int getItemViewType(int position) {
+        return (position % MainActivity.ITEMS_PER_AD == 0 && position != 0) ? AddsViewType
+                : NewsDataViewType;
 
-            String description = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Descrption));
-            String sourceName = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Source_Name));
-            String title = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Title));
-            String image = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Image_Url));
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder h, int position) {
+        int viewType = getItemViewType(position);
+        switch (viewType) {
+
+            case NewsDataViewType:
+                Log.d("new data", "onBindViewHolder: ");
+                if (c != null) {
+                    final RecycelHolder holder = (RecycelHolder) h;
+                    MyObject m = (MyObject) c.get(position);
+                    String auther_Name = m.getAuther_Name();
+
+                    String description = m.getDescription();
+                    String sourceName = m.getSourceName();
+                    String title = m.getTitle();
+                    String image = m.getImage();
             if (auther_Name == null || auther_Name.equals("") || auther_Name.equals("null"))
                 auther_Name = "Anonymous";
             if (auther_Name.contains("http:"))
                 holder.autherName.setTextColor(Color.BLUE);
             else holder.autherName.setTextColor(Color.BLACK);
 
-            Log.d(auther_Name, "onBindViewHolder: ");
+                    //Log.d(auther_Name, "onBindViewHolder: ");
 
 
             holder.autherName.setText(auther_Name);
             holder.description.setText(description);
             holder.sourceName.setText(sourceName);
             holder.title.setText(title);
-            holder.url = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Url));
+                    holder.url = m.getUrl();
+                    holder.date.setText(m.getDate());
+                    holder.p.setVisibility(View.VISIBLE);
             Glide.with(holder.context)
-                    .load(c.getString(c.getColumnIndex(NewsContract.NewsArticles.Image_Url)))
+                    .load(image)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            holder.p.setVisibility(View.GONE);
+                            return false;
+                        }
 
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            holder.p.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .skipMemoryCache(true)
                     .into(holder.imageView);
         }
+                break;
+            default:
+                Log.d("ads data", "onBindViewHolder: ");
+                NativeExpressAdViewHolder nativeExpressHolder =
+                        (NativeExpressAdViewHolder) h;
+                NativeExpressAdView adView =
+                        (NativeExpressAdView) c.get(position);
+                ViewGroup adCardView = (ViewGroup) nativeExpressHolder.itemView;
+                // The NativeExpressAdViewHolder recycled by the RecyclerView may be a different
+                // instance than the one used previously for this position. Clear the
+                // NativeExpressAdViewHolder of any subviews in case it has a different
+                // AdView associated with it, and make sure the AdView for this position doesn't
+                // already have a parent of a different recycled NativeExpressAdViewHolder.
+                if (adCardView.getChildCount() > 0) {
+                    adCardView.removeAllViews();
+                }
+                if (adView.getParent() != null) {
+                    ((ViewGroup) adView.getParent()).removeView(adView);
+                }
 
+                // Add the Native Express ad to the native express ad view.
+                adCardView.addView(adView);
+                break;
+        }
     }
 
     @Override
     public int getItemCount() {
         if (c != null)
-        return c.getCount();
+            return c.size();
         else
             return 0;
     }
 
-    public void setdata(Cursor cursor) {
+    public void setdata(List<Object> cursor) {
         c = cursor;
         notifyDataSetChanged();
     }
@@ -89,8 +163,10 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyceleAdpterMain.
         private TextView description;
         private TextView sourceName;
         private TextView autherName;
+        private TextView date;
         private Context context;
         private String url;
+        private ProgressBar p;
 
         public RecycelHolder(View itemView) {
             super(itemView);
@@ -104,6 +180,8 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyceleAdpterMain.
             autherName.setOnClickListener(this);
             title.setOnClickListener(this);
             description.setOnClickListener(this);
+            p = (ProgressBar) itemView.findViewById(R.id.progressBar2);
+            date = (TextView) itemView.findViewById(R.id.item_date);
 
         }
 
@@ -128,6 +206,13 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyceleAdpterMain.
             }
 
 
+        }
+    }
+
+    public class NativeExpressAdViewHolder extends RecyclerView.ViewHolder {
+
+        NativeExpressAdViewHolder(View view) {
+            super(view);
         }
     }
 }

@@ -22,7 +22,7 @@ public class MyContent extends ContentProvider {
     final int video = 400;
     NewDbHelper dbHelper;
     UriMatcher matcher = createMatcher();
-
+    SQLiteDatabase liteDatabase;
     private UriMatcher createMatcher() {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(NewsContract.Authority, NewsContract.NewsArticles.TABLE_NAME, articales);
@@ -34,6 +34,7 @@ public class MyContent extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbHelper = new NewDbHelper(getContext());
+
         return true;
     }
 

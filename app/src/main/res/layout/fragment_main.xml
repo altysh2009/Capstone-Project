@@ -7,18 +7,38 @@
     tools:context="com.example.home_.news.MainActivityFragment"
     tools:showIn="@layout/activity_main">
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycle_view_main"
+    <FrameLayout
         android:layout_width="0dp"
-
         android:layout_height="0dp"
-        android:background="@color/lightPrimaryColor"
-        android:padding="8dp"
-        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_view_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        android:background="@color/lightPrimaryColor"
+        android:padding="8dp"
+
+        android:scrollbars="vertical"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp" />
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:padding="8dp"
+            android:text="@string/empty_recycle"
+            android:textSize="26sp"
+            android:visibility="invisible" />
+
+    </FrameLayout>
+
 
 </android.support.constraint.ConstraintLayout>

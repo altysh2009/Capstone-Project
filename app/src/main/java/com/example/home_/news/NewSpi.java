@@ -18,7 +18,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Scanner;
+import java.util.TimeZone;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -92,7 +98,7 @@ public class  NewSpi {
 
     public static URL[] getMultiSources(String[] sources)
     {
-        Log.d("Multi", "getMultiSources: ");
+        //Log.d("Multi", "getMultiSources: ");
         URL[] urls = new URL[sources.length];
         int index = 0;
         for (String i:sources)
@@ -104,7 +110,7 @@ public class  NewSpi {
     }
 
     public static ContentValues[] readSourcesRespond(String data) throws JSONException {
-        Log.d("Artclas", "readSourcesRespond: ");
+        //Log.d("Artclas", "readSourcesRespond: ");
         JSONObject reader = new JSONObject(data);
 
 
@@ -126,7 +132,7 @@ public class  NewSpi {
             contentValues.put(NewsContract.NewsArticles.Descrption, object.getString(DESCR));
             contentValues.put(NewsContract.NewsArticles.Url, object.getString(URL_AR));
             contentValues.put(NewsContract.NewsArticles.Image_Url, object.getString(URL_TO_IMAGE));
-            contentValues.put(NewsContract.NewsArticles.Date, object.getString(PUBLISHED_AT));
+            contentValues.put(NewsContract.NewsArticles.Date, getDate(object.getString(PUBLISHED_AT)));
             allInput[s] = contentValues;
         }
 
@@ -134,7 +140,7 @@ public class  NewSpi {
     }
 
     public static ContentValues[] readSourcesNames(JSONObject reader) throws JSONException {
-        Log.d("sources", "readSourcesNames: ");
+        //Log.d("sources", "readSourcesNames: ");
         String statue = reader.getString(STATUS);
         if (statue.equals(ERROR))
         {
@@ -188,7 +194,7 @@ public class  NewSpi {
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        Log.d("sync", "getResponseFromHttpUrl: ");
+        //Log.d("sync", "getResponseFromHttpUrl: ");
         try {
             InputStream in = urlConnection.getInputStream();
 
@@ -206,6 +212,33 @@ public class  NewSpi {
 
             urlConnection.disconnect();
         }
+    }
+
+    public static String getDate(String OurDate) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-mm HH:mm", Locale.US); //this format changeable
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+        Log.d("OurDate", OurDate);
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date value = formatter.parse(OurDate);
+
+
+            OurDate = dateFormatter.format(value);
+
+            Log.d("OurDate", OurDate);
+            //return OurDate;
+
+        } catch (Exception e) {
+            Log.d("errer", "onCreate: ");
+        }
+        String r = java.text.DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(Calendar.getInstance().getTime());//dateFormatter.format(Calendar.getInstance().getTime());
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("MM-dd HH:mm");
+        String formattedDate = df.format(c.getTime());
+        Log.d(r + " " + currentDateTimeString + " " + formattedDate + " " + OurDate, " getDate: ");
+        return r;
     }
 
     private JSONObject give(JSONObject j) {

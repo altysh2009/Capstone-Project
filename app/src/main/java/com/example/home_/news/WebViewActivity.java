@@ -27,7 +27,12 @@ public class WebViewActivity extends AppCompatActivity {
         url = getIntent().getExtras().getString("url");
         toolbar = (Toolbar) findViewById(R.id.toolbar_web);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
         getSupportActionBar().setTitle(url);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         final Activity activity = this;
         setSupportActionBar(toolbar);

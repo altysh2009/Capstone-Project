@@ -6,14 +6,11 @@ import android.provider.BaseColumns;
 
 public class NewsContract {
     static final String Authority = "com.example.home_.news.data";
-
-
+    public static final String update = Authority + ".update";
     private static final Uri DATA_TABLE = Uri.parse("content://" + Authority);
     public static final Uri sources = DATA_TABLE.buildUpon().appendPath(NewsSources.TABLE_NAME).build();
     public static final Uri articles = DATA_TABLE.buildUpon().appendPath(NewsArticles.TABLE_NAME).build();
-    public static final String update = DATA_TABLE.buildUpon().appendPath("update").build().toString();
-
-
+    private static final Uri DATA_Update = Uri.parse(Authority);
 
     public static final class NewsSources implements BaseColumns {
         public static final String TABLE_NAME = "news_sources";
