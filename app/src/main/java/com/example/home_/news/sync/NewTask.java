@@ -30,6 +30,7 @@ public class NewTask {
 
         Intent dataUpdatedIntent = new Intent(NewsContract.update);
         context.sendBroadcast(dataUpdatedIntent);
+        NotifcationNews.showNotifecation(context);
         if (c != null)
             c.close();
 
@@ -90,7 +91,7 @@ public class NewTask {
 
                     String respond = NewSpi.getResponseFromHttpUrl(url);
 
-                    ContentValues[] contentValues = NewSpi.readSourcesRespond(respond);
+                    ContentValues[] contentValues = NewSpi.readSourcesRespond(respond, context);
                     if (contentValues != null && contentValues.length != 0) {
 
                         contentResolver.bulkInsert(NewsContract.articles, contentValues);

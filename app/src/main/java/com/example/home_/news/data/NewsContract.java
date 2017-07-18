@@ -40,6 +40,8 @@ public class NewsContract {
 
         public static final String Sorded_By = "sorded_by";
         public static final String Source_Name = "source_name";
+        public static final String Source_Readable_Name = "source_onscreen";
+
 
     }
 }

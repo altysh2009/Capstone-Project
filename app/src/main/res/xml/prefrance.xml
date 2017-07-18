@@ -36,24 +36,24 @@
         android:persistent="true"
         android:summary="@string/country_summry"
         android:title="@string/country_name" />
-    <ListPreference
-        android:defaultValue="@string/latest_key"
-        android:enabled="true"
-        android:entries="@array/see_first_names"
-        android:entryValues="@array/see_first_values"
-        android:key="@string/see_first_key"
-        android:persistent="true"
-        android:summary="@string/see_first_sammry"
-        android:title="@string/see_first_title" />
-    <ListPreference
-        android:defaultValue="@string/backed_up_data_three_days_key"
-        android:enabled="true"
-        android:entries="@array/backed_up_data_names"
-        android:entryValues="@array/backed_up_data_values"
-        android:key="@string/backed_up_data_key"
-        android:persistent="true"
-        android:summary="@string/backed_up_data_sammry"
-        android:title="@string/backed_up_data_title" />
+    <!--    <ListPreference
+            android:defaultValue="@string/latest_key"
+            android:enabled="true"
+            android:entries="@array/see_first_names"
+            android:entryValues="@array/see_first_values"
+            android:key="@string/see_first_key"
+            android:persistent="true"
+            android:summary="@string/see_first_sammry"
+            android:title="@string/see_first_title" />
+        <ListPreference
+            android:defaultValue="@string/backed_up_data_three_days_key"
+            android:enabled="true"
+            android:entries="@array/backed_up_data_names"
+            android:entryValues="@array/backed_up_data_values"
+            android:key="@string/backed_up_data_key"
+            android:persistent="true"
+            android:summary="@string/backed_up_data_sammry"
+            android:title="@string/backed_up_data_title" />-->
 
     <CheckBoxPreference
         android:enabled="true"

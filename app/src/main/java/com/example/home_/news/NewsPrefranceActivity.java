@@ -234,6 +234,15 @@ public class NewsPrefranceActivity extends AppCompatActivity {
         }
 
         public void setSources(MultiSelectListPreference source) {
+            MultiSelectListPreference category = (MultiSelectListPreference) findPreference(getString(R.string.category_key));
+            MultiSelectListPreference country = (MultiSelectListPreference) findPreference(getString(R.string.country_key));
+            MultiSelectListPreference lan = (MultiSelectListPreference) findPreference(getString(R.string.lan_key));
+            if (getSet(lan.getEntryValues()).containsAll(lan.getValues()) &&
+                    getSet(country.getEntryValues()).equals(country.getValues()) &&
+                    getSet(category.getEntryValues()).equals(category.getValues())) {
+                source.setValues(getSet(source.getEntryValues()));
+                return;
+            }
 
             String select = NewsContract.NewsSources.Category + " IN "
                     + MainActivity.getStringFromSet(NewsPreferencesUtils.getPreferredCatgory(context)) + " AND " + NewsContract.NewsSources.Lang + " IN "
@@ -256,9 +265,16 @@ public class NewsPrefranceActivity extends AppCompatActivity {
                 source.setValues(h);
                 c.close();
             } else {
-                Toast.makeText(context, getString(R.string.empty_resources_reslut), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, getString(R.string.empty_resources_reslut), Toast.LENGTH_SHORT).show();
 
             }
+        }
+
+        public Set<String> getSet(CharSequence[] charSequence) {
+            String[] s = new String[charSequence.length];
+            for (int i = 0; i < charSequence.length; i++)
+                s[i] = charSequence[i].toString();
+            return new HashSet<String>(Arrays.asList(s));
         }
 
         @Override

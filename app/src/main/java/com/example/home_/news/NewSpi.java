@@ -2,6 +2,7 @@ package com.example.home_.news;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -18,7 +19,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -109,7 +109,7 @@ public class  NewSpi {
         return urls;
     }
 
-    public static ContentValues[] readSourcesRespond(String data) throws JSONException {
+    public static ContentValues[] readSourcesRespond(String data, Context context) throws JSONException {
         //Log.d("Artclas", "readSourcesRespond: ");
         JSONObject reader = new JSONObject(data);
 
@@ -120,6 +120,16 @@ public class  NewSpi {
             return null;
         }
         String source = reader.getString(SOURCE);
+        Cursor cursor = context.getContentResolver().query(NewsContract.sources, new String[]{NewsContract.NewsSources.News_Sources_Name}, NewsContract.NewsSources.News_Sources_Id + "=?", new String[]{source}, null);
+        String sourceName = "q3rok[23kr";
+        if (cursor != null)
+            while (cursor.moveToNext()) {
+                Log.d(sourceName, "readSourcesRespond: ");
+                sourceName = cursor.getString(cursor.getColumnIndex(NewsContract.NewsSources.News_Sources_Name));
+                Log.d(sourceName, "readSourcesRespond: ");
+                cursor.close();
+            }
+
         JSONArray jsonArray = reader.getJSONArray(ARTICLES);
         ContentValues[] allInput = new ContentValues[jsonArray.length()];
         for (int s = 0;s<jsonArray.length();s++)
@@ -128,6 +138,7 @@ public class  NewSpi {
             JSONObject object = jsonArray.getJSONObject(s);
             contentValues.put(NewsContract.NewsArticles.Author, object.getString(AUTHOR));
             contentValues.put(NewsContract.NewsArticles.Source_Name, source);
+            contentValues.put(NewsContract.NewsArticles.Source_Readable_Name, sourceName);
             contentValues.put(NewsContract.NewsArticles.Title, object.getString(TITLE));
             contentValues.put(NewsContract.NewsArticles.Descrption, object.getString(DESCR));
             contentValues.put(NewsContract.NewsArticles.Url, object.getString(URL_AR));
@@ -215,7 +226,7 @@ public class  NewSpi {
     }
 
     public static String getDate(String OurDate) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-mm HH:mm", Locale.US); //this format changeable
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US); //this format changeable
         dateFormatter.setTimeZone(TimeZone.getDefault());
         Log.d("OurDate", OurDate);
         try {
@@ -231,14 +242,17 @@ public class  NewSpi {
 
         } catch (Exception e) {
             Log.d("errer", "onCreate: ");
+            Calendar c = Calendar.getInstance();
+
+            return dateFormatter.format(c.getTime());
         }
-        String r = java.text.DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(Calendar.getInstance().getTime());//dateFormatter.format(Calendar.getInstance().getTime());
+      /*  String r = java.text.DateFormat.getDateInstance(DateFormat.DATE_FIELD).format(Calendar.getInstance().getTime());//dateFormatter.format(Calendar.getInstance().getTime());
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("MM-dd HH:mm");
         String formattedDate = df.format(c.getTime());
-        Log.d(r + " " + currentDateTimeString + " " + formattedDate + " " + OurDate, " getDate: ");
-        return r;
+        Log.d(r + " " + currentDateTimeString + " " + formattedDate + " " + OurDate, " getDate: ");*/
+        return OurDate;
     }
 
     private JSONObject give(JSONObject j) {

@@ -65,9 +65,10 @@ public class NewDbHelper extends SQLiteOpenHelper {
 
                         NewsContract.NewsArticles.Author + " STRING  , " +
                         NewsContract.NewsArticles.Source_Name + " STRING NOT NULL , " +
+                        NewsContract.NewsArticles.Source_Readable_Name + " STRING NOT NULL , " +
 
 
-                        " UNIQUE (" + NewsContract.NewsArticles.Url + ") ON CONFLICT REPLACE);";
+                        " UNIQUE (" + NewsContract.NewsArticles.Url + ") ON CONFLICT IGNORE);";
 
 
         sqLiteDatabase.execSQL(SQL_CREATE_NEWS_SOUCES_TABLE);

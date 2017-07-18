@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.home_.news.MainActivity;
+
 /**
  * Created by Home- on 05/03/2017.
  */
@@ -46,10 +48,28 @@ public class MyContent extends ContentProvider {
         Cursor c = null;
         switch (match) {
             case articales:
-                c = sqLiteDatabase.query(NewsContract.NewsArticles.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                if (sortOrder != null) {
+
+                    Cursor ss = sqLiteDatabase.query(NewsContract.NewsSources.TABLE_NAME, new String[]{NewsContract.NewsSources.News_Sources_Name}, sortOrder + " =?", new String[]{"true"}, null, null, null);
+                    String[] sources = new String[ss.getCount()];
+                    if (ss.getCount() != 0) {
+                        int i = 0;
+                        while (ss.moveToNext()) {
+                            sources[i] = ss.getString(ss.getColumnIndex(NewsContract.NewsSources.News_Sources_Id));
+                            i++;
+                        }
+                        ss.close();
+                        String select = NewsContract.NewsArticles.Source_Name + " IN " + MainActivity.getStringFromArray(sources) + " and ";
+
+                        c = sqLiteDatabase.query(NewsContract.NewsArticles.TABLE_NAME, projection, select, selectionArgs, null, null, sortOrder);
+
+                    }
+                    c = sqLiteDatabase.query(NewsContract.NewsArticles.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                } else
+                    c = sqLiteDatabase.query(NewsContract.NewsArticles.TABLE_NAME, projection, selection, selectionArgs, null, null, "strftime('%yyyy-%mm-%dd %HH:%MM', " + NewsContract.NewsArticles.Date + ")");
                 break;
             case newSources:
-                c = sqLiteDatabase.query(NewsContract.NewsSources.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                c = sqLiteDatabase.query(NewsContract.NewsSources.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
                 Log.d(c.getColumnCount() + "", "query: ");
                 break;
 

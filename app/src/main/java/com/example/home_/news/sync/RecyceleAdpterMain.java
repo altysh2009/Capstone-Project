@@ -139,8 +139,11 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        if (c != null)
+        if (c != null) {
+            Log.d(c.size() + " ", "getItemCount: ");
             return c.size();
+        }
+
         else
             return 0;
     }

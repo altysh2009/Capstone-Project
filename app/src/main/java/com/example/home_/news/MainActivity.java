@@ -5,26 +5,32 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.home_.news.data.NewsContract;
 import com.example.home_.news.data.NewsPreferencesUtils;
 import com.example.home_.news.sync.NewsJopInitialize;
+import com.example.home_.news.sync.NotifcationNews;
 import com.example.home_.news.sync.RecyceleAdpterMain;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -44,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int NATIVE_EXPRESS_AD_HEIGHT = 150;
     // The Native Express ad unit ID.
     private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1072772517";
+    private final String SEARCH_KEY_WORD = "keyword";
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -57,13 +64,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     RecyclerView mNewsList;
     TextView error;
     Context context;
+    ProgressBar searchPrgress;
     List<Object> newData;
+    ImageButton cancelBottom;
+    private EditText search;
 
     public static String getStringFromSet(Set<String> data) {
         String[] arraySet;
         String string = "";
         if (data != null) {
             arraySet = data.toArray(new String[]{});
+            string = Arrays.toString(arraySet).replace("[", "( \'").replace("]", "\' )").replace(",", "\',\'").replace(" ", "");
+            return string;
+        }
+        return string;
+    }
+
+    public static String getStringFromArray(String[] data) {
+        String[] arraySet;
+        String string = "";
+        if (data != null) {
+            arraySet = data;
             string = Arrays.toString(arraySet).replace("[", "( \'").replace("]", "\' )").replace(",", "\',\'").replace(" ", "");
             return string;
         }
@@ -81,9 +102,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
          adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();*/
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        CollapsingToolbarLayout toolbar = (CollapsingToolbarLayout) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+        search = (EditText) findViewById(R.id.search_main);
+        searchPrgress = (ProgressBar) findViewById(R.id.progressBar_search);
+        cancelBottom = (ImageButton) findViewById(R.id.cancel_serach_bottom);
         error = (TextView) findViewById(R.id.error_text);
         error.setVisibility(View.INVISIBLE);
         NewsJopInitialize.initialize(getApplicationContext());
@@ -93,6 +116,40 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mNewsList.setHasFixedSize(true);
         mAdapter = new RecyceleAdpterMain(this);
         mNewsList.setAdapter(mAdapter);
+        cancelBottom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search.setText("");
+                getSupportLoaderManager().destroyLoader(1);
+                getSupportLoaderManager().initLoader(1, null, MainActivity.this);
+            }
+        });
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 2) {
+                    Bundle b = new Bundle();
+                    b.putString(SEARCH_KEY_WORD, s.toString());
+                    searchPrgress.setVisibility(View.VISIBLE);
+                    getSupportLoaderManager().destroyLoader(1);
+                    getSupportLoaderManager().initLoader(1, b, MainActivity.this);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() < 2) {
+                    cancelBottom.setVisibility(View.GONE);
+                    getSupportLoaderManager().destroyLoader(1);
+                    getSupportLoaderManager().initLoader(1, null, MainActivity.this);
+                }
+            }
+        });
 
         createAdd();
         // requestNewInterstitial();
@@ -103,16 +160,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String s = NewSpi.getSourcesNames("", "", "").toString();
-
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                NotifcationNews.showNotifecation(context);
             }
         });
     }
 
-    private void setUpAndLoadNativeExpressAds() {
+    private void setUpAndLoadNativeExpressAds() throws Exception {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        final int width = size.x;
         // Use a Runnable to ensure that the RecyclerView has been laid out before setting the
         // ad size for the Native Express ad. This allows us to set the Native Express ad's
         // width to match the full width of the RecyclerView.
@@ -127,16 +184,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     for (int i = ITEMS_PER_AD; i <= newData.size(); i += ITEMS_PER_AD) {
                         final NativeExpressAdView adView =
                                 (NativeExpressAdView) newData.get(i);
-                        final LinearLayout cardView = (LinearLayout) findViewById(R.id.lll);
-                        final int adWidth = cardView.getWidth() - cardView.getPaddingLeft()
-                                - cardView.getPaddingRight();
+                        //final LinearLayout cardView = (LinearLayout) findViewById(R.id.lll);
+                        final int adWidth = width - 16
+                                - 16;
                         AdSize adSize = new AdSize((int) (adWidth / scale), NATIVE_EXPRESS_AD_HEIGHT);
                         adView.setAdSize(adSize);
                         adView.setAdUnitId(AD_UNIT_ID);
                     }
 
                     // Load the first Native Express ad in the items list.
-                    loadNativeExpressAd(ITEMS_PER_AD);
+                    try {
+                        loadNativeExpressAd(ITEMS_PER_AD);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -186,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    private void loadNativeExpressAd(final int index) {
+    private void loadNativeExpressAd(final int index) throws Exception {
 
         if (index >= newData.size()) {
             return;
@@ -208,7 +269,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 super.onAdLoaded();
                 // The previous Native Express ad loaded successfully, call this method again to
                 // load the next ad in the items list.
-                loadNativeExpressAd(index + ITEMS_PER_AD);
+                try {
+                    loadNativeExpressAd(index + ITEMS_PER_AD);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Log.d(index + ITEMS_PER_AD + " ", "onAdLoaded: ");
             }
 
@@ -217,8 +282,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 // The previous Native Express ad failed to load. Call this method again to load
                 // the next ad in the items list.
                 Log.e("MainActivity", "The previous Native Express ad failed to load. Attempting to"
-                        + " load the next Native Express ad in the items list.");
-                loadNativeExpressAd(index + ITEMS_PER_AD);
+                        + " load the next Native Express ad in the items list." + errorCode);
+                try {
+                    loadNativeExpressAd(index + ITEMS_PER_AD);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -270,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onRestart() {
         super.onRestart();
+
         getSupportLoaderManager().restartLoader(1, null, this);
     }
 
@@ -300,65 +370,67 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Set<String> sources = NewsPreferencesUtils.getPreferredSources(context);
         CursorLoader x;
 
-        Set<String> catgorys = NewsPreferencesUtils.getPreferredCatgory(context);
-        Set<String> Lan = NewsPreferencesUtils.getPreferredLang(context);
+
         String source = NewsContract.NewsArticles.Source_Name + " IN " + getStringFromSet(sources);
+        if (args == null) {
 
 
-        if (sources == null)
+            if (sources == null)
             x = new CursorLoader(getApplicationContext(), NewsContract.articles, null, null, null, null);
         else
             x = new CursorLoader(getApplicationContext(), NewsContract.articles, null, source, null, null);
 
 
-        return x;
+            return x;
+        } else {
+            String word = args.getString(SEARCH_KEY_WORD);
+
+
+            if (sources == null)
+                x = new CursorLoader(getApplicationContext(), NewsContract.articles, null, word + " IN " + NewsContract.NewsArticles.Source_Readable_Name + " GLOB " + "( \'" + word + "*" + "\' )"
+                        + " OR " + NewsContract.NewsArticles.Title + " like   " + "( \'" + "%" + word + "%" + "\' )", null, null);
+
+            else
+                x = new CursorLoader(getApplicationContext(), NewsContract.articles, null, source + " AND " + NewsContract.NewsArticles.Source_Readable_Name + " GLOB " + "( \'" + word + "*" + "\' )"
+                        + " OR " + NewsContract.NewsArticles.Title + " like   " + "( \'" + "%" + word + "%" + "\' )", null, null);
+
+            return x;
+
+        }
+
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (searchPrgress.getVisibility() == View.VISIBLE) {
+            searchPrgress.setVisibility(View.GONE);
+            cancelBottom.setVisibility(View.VISIBLE);
 
+        } else {
+            searchPrgress.setVisibility(View.GONE);
+            cancelBottom.setVisibility(View.GONE);
+        }
         if (data.getCount() == 0) {
+            Log.d("data is empty", "onLoadFinished: ");
             error.setVisibility(View.VISIBLE);
         } else {
             error.setVisibility(View.INVISIBLE);
             newData = setAddsToList(setDataToList(data));
             mAdapter.setdata(newData);
-            setUpAndLoadNativeExpressAds();
+            try {
+                setUpAndLoadNativeExpressAds();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
 
     }
 
-    public List<Object> setAddsToList(List<Object> data) {
-
-        for (int i = ITEMS_PER_AD; i <= data.size(); i += ITEMS_PER_AD) {
-            final NativeExpressAdView adView = new NativeExpressAdView(MainActivity.this);
-            data.add(i, adView);
-            Log.d(i + " ", "onAdLoaded: ");
-        }
-        return data;
-    }
-
-    public List<Object> setDataToList(Cursor c) {
-        List<Object> data = new ArrayList<Object>();
-
-        while (c.moveToNext()) {
-            String auther_Name = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Author));
-
-            String description = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Descrption));
-            String sourceName = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Source_Name));
-            String title = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Title));
-            String image = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Image_Url));
-            String url = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Url));
-            String date = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Date));
-            MyObject m = new MyObject(auther_Name, date, description, image, sourceName, title, url);
-            data.add(m);
-        }
-        return data;
-    }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.d(TAG, "onLoaderReset: ");
         mAdapter.setdata(null);
         loader.reset();
     }
@@ -376,7 +448,34 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         }
     }
+    public List<Object> setAddsToList(List<Object> data) {
 
+        for (int i = ITEMS_PER_AD; i <= data.size(); i += ITEMS_PER_AD) {
+            final NativeExpressAdView adView = new NativeExpressAdView(MainActivity.this);
+            data.add(i, adView);
+            //Log.d(i + " ", "onAdLoaded: ");
+        }
+        return data;
+    }
+
+    public List<Object> setDataToList(Cursor c) {
+        List<Object> data = new ArrayList<Object>();
+
+
+        while (c.moveToNext()) {
+            String auther_Name = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Author));
+
+            String description = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Descrption));
+            String sourceName = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Source_Readable_Name));
+            String title = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Title));
+            String image = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Image_Url));
+            String url = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Url));
+            String date = c.getString(c.getColumnIndex(NewsContract.NewsArticles.Date));
+            MyObject m = new MyObject(auther_Name, date, description, image, sourceName, title, url);
+            data.add(m);
+        }
+        return data;
+    }
     @Override
     protected void onResume() {
         super.onResume();

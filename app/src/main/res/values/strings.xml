@@ -100,5 +100,7 @@
     <string name="empty_resources_reslut">Cannot do that it will give you no Resources</string>
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 
+    <string name="new_search_hint">Enter news Source OR any Title</string>
+
 
 </resources>
