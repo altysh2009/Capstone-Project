@@ -228,7 +228,7 @@ public class  NewSpi {
     public static String getDate(String OurDate) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US); //this format changeable
         dateFormatter.setTimeZone(TimeZone.getDefault());
-        Log.d("OurDate", OurDate);
+        //Log.d("OurDate", OurDate);
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -237,11 +237,11 @@ public class  NewSpi {
 
             OurDate = dateFormatter.format(value);
 
-            Log.d("OurDate", OurDate);
+            // Log.d("OurDate", OurDate);
             //return OurDate;
 
         } catch (Exception e) {
-            Log.d("errer", "onCreate: ");
+            // Log.d("errer", "onCreate: ");
             Calendar c = Calendar.getInstance();
 
             return dateFormatter.format(c.getTime());

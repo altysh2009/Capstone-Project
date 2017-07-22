@@ -17,7 +17,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.example.home_.news.MainActivity;
 import com.example.home_.news.MyObject;
 import com.example.home_.news.R;
 import com.google.android.gms.ads.NativeExpressAdView;
@@ -55,8 +54,9 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        return (position % MainActivity.ITEMS_PER_AD == 0 && position != 0) ? AddsViewType
-                : NewsDataViewType;
+//        return (position % MainActivity.ITEMS_PER_AD == 0 && position != 0) ? AddsViewType
+//                : NewsDataViewType;
+        return NewsDataViewType;
 
     }
 
@@ -114,6 +114,7 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
                 break;
             default:
                 Log.d("ads data", "onBindViewHolder: ");
+
                 NativeExpressAdViewHolder nativeExpressHolder =
                         (NativeExpressAdViewHolder) h;
                 NativeExpressAdView adView =
@@ -149,14 +150,24 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void setdata(List<Object> cursor) {
+
         c = cursor;
         notifyDataSetChanged();
     }
 
-    public interface ReciveClick {
-        public void theClickedItem(String thumb);
+    @Override
+    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        ImageView imageView = (ImageView) holder.itemView.findViewById(R.id.item_image);
+        if (imageView != null)
+            Glide.clear(imageView);
+        // holder.contentsTarget = null;
+    }
 
-        public void theClickedItem(String thumb, int id);
+    public interface ReciveClick {
+        void theClickedItem(String thumb);
+
+        void theClickedItem(String thumb, int id);
 
     }
 

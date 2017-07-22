@@ -159,6 +159,46 @@ public final class NewsPreferencesUtils {
         return sp.getBoolean(context.getString(R.string.sources_key), false);
     }
 
+    public static void saveLastId(Context context, long Id) {
+        if (Id != -1) {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sp.edit();
+
+            editor.putLong("Last Id", Id);
+
+            editor.apply();
+        } else if (getLastId(context) > 0) {
+
+        } else {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sp.edit();
+
+            editor.putLong("Last Id", 0);
+
+            editor.apply();
+        }
+    }
+
+    public static long getLastId(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getLong("Last Id", 0);
+    }
+
+    public static void setPos(Context context, Set<String> pos) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        editor.putStringSet("listIndex", pos);
+
+
+        editor.apply();
+    }
+
+    public static Set<String> getPos(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getStringSet("listIndex", null);
+    }
+
 
 
 

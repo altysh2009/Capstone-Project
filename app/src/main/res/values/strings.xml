@@ -101,6 +101,7 @@
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 
     <string name="new_search_hint">Enter news Source OR any Title</string>
+    <string name="news_search_empty">No data match try another world</string>
 
 
 </resources>

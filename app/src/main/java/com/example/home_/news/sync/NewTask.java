@@ -22,6 +22,8 @@ import java.util.Set;
 
 public class NewTask {
     synchronized public static void task(Context context) {
+        Intent dataUpdatingdIntent = new Intent(NewsContract.updating);
+        context.sendBroadcast(dataUpdatingdIntent);
         ContentResolver contentResolver = context.getContentResolver();
         Cursor c = contentResolver.query(NewsContract.sources, null, null, null, null, null);
         if (c == null || c.getCount() == 0)

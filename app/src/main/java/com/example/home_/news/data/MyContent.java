@@ -175,12 +175,25 @@ public class MyContent extends ContentProvider {
         if (table.equals("error"))
             return 0;
         sqLiteDatabase.beginTransaction();
+        long in = 0;
+        long last = 0;
         try {
             for (ContentValues i : values) {
-                sqLiteDatabase.insert(table, null, i);
+                in = sqLiteDatabase.insert(table, null, i);
+                // Log.d(in+" ", "bulkInsert: ");
+                last = in;
             }
-            sqLiteDatabase.setTransactionSuccessful();
+
+
+        } catch (Exception e) {
+            in = last;
+            //Log.d(" error", "bulkInsert: ");
         } finally {
+            Log.d(in + " ", "bulkInsert: ");
+            Log.d(NewsPreferencesUtils.getLastId(getContext()) + " ", "bulkInsert: ");
+
+            NewsPreferencesUtils.saveLastId(getContext(), in);
+            sqLiteDatabase.setTransactionSuccessful();
             sqLiteDatabase.endTransaction();
         }
 
