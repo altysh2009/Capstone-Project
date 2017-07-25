@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if (listIndex < newData.size()) {
                 int jump = 20;
                 if (newData.size() < listIndex + jump)
-                    jump = newData.size() - listIneex + 1;
+                    jump = newData.size() - listIneex;
                 for (int i = listIndex; i < listIndex + jump; i++)
                     limitData.add(newData.get(i));
                 final int start = addIndex.size();
@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 if (limitData.size() >= maxSize + jump) {
                     int delet = limitData.size() - maxSize + jump / 2;
-                    Log.d(TAG + " " + delet, "getAddsIndex: ");
+                    Log.d(TAG + " " + delet, "getAddsIndex: " + newData.size() + " " + limitData.size());
 
                     for (int i = 0; i < jump + delet; i++)
                         limitData.remove(0);
