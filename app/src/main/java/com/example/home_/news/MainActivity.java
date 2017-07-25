@@ -1,13 +1,15 @@
 package com.example.home_.news;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,7 +21,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +39,10 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.NativeExpressAdView;
+import com.google.android.gms.ads.VideoController;
+import com.google.android.gms.ads.VideoOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // The Native Express ad unit ID.
     private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1072772517";
     private static Bundle mBundleRecyclerViewState;
-    final int maxSize = 80;
+    final int PLAY_SERVICES_RESOLUTION_REQUEST = 8000;
+    final int maxSize = 50;
     private final String LIST_STATE_KEY = "listPostion";
     private final String LIST_DATA_KEY = "List Data";
     private final String SEARCH_KEY_WORD = "keyword";
@@ -64,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     RecyclerView mNewsList;
     TextView error;
     Context context;
+    int[] in;
     ProgressBar searchPrgress;
     ProgressBar loading;
     List<Object> newData;
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     List<Object> limitData;
     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
     int pos = 0;
+    ArrayList<String> addIndex = new ArrayList<String>();
     private Boolean search_state = false;
     private Boolean loadingState = false;
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -78,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         public void onReceive(Context context, Intent intent) {
             String s = intent.getAction();
             if (s.equals(NewsContract.update)) {
-                Log.d("update", "onReceive: ");
+                // Log.d("update", "onReceive: ");
                 loadingState = false;
                 //loading.setVisibility(View.GONE);
                 getSupportLoaderManager().restartLoader(1, null, MainActivity.this);
@@ -93,8 +101,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Log.d("CONNECTIVITY_CHANGE", "onReceive: ");
             else if (s.equals(NewsContract.updating)) {
                 loadingState = true;
+                loading.setVisibility(View.VISIBLE);
+                error.setVisibility(View.INVISIBLE);
                 // loading.setVisibility(View.VISIBLE);
-                Log.d(TAG, "onReceive: ");
+                //Log.d(TAG, "onReceive: ");
             }
 
         }
@@ -131,12 +141,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         context = getApplicationContext();
-       /* mInterstitialAd = new InterstitialAd(context);
-        mInterstitialAd.setAdUnitId("ca-app-pub-0243484158988577/9196272994");
-         adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();*/
-        Toolbar toolbar = (Toolbar) findViewById(R.id.ttoolbar);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.ttoolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -156,7 +162,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         requestNewInterstitial2();
         mNewsList.setLayoutManager(layoutManager);
         mNewsList.setHasFixedSize(true);
+
         mAdapter = new RecyceleAdpterMain(this);
+        mAdapter.setHasStableIds(true);
         mNewsList.setAdapter(mAdapter);
 
         mNewsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -166,18 +174,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 //Log.d(TAG, "onScrollStateChanged: ");
+
+                mAdapter.setScrolling(false);
                 endend = newState == RecyclerView.SCROLL_STATE_IDLE;
-                if (endend)
-                    onScrolled(recyclerView, 0, 0);
+                if (endend) {
+                    in = getlistin();
+
+
+                    onScrolled(recyclerView, -1, -1);
+                }
+
             }
+
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int visibleItemCount = layoutManager.getChildCount();
-                int totalItemCount = layoutManager.getItemCount();
-                int pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
-                //Log.d(TAG+" "+visibleItemCount+" "+pastVisiblesItems, " onScrolled: ");
+                Log.d(TAG, "onScrolled: ");
+                if (in != null && in.length > 0 && dx == -1 && dy == -1) {
+                    int visibleItemCount = in[0];
+                    int pastVisiblesItems = in[2];
+                    int totalItemCount = in[1];
+                    Log.d(TAG + " " + visibleItemCount + " " + pastVisiblesItems + " " + totalItemCount, " onScrolled: ");
                 if (visibleItemCount + pastVisiblesItems >= totalItemCount && endend) {
                     setMore();
 
@@ -191,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 }
 
+                }
             }
         });
         cancelBottom.setOnClickListener(new View.OnClickListener() {
@@ -226,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         createAdd();
         // requestNewInterstitial();
-        Log.d(TAG, "onCreate: ");
+        // Log.d(TAG, "onCreate: ");
         getSupportLoaderManager().initLoader(1, null, this);
         //Log.d(TAG, "onCreate: ");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -240,38 +259,47 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void loadFrist() {
-        Log.d(TAG + " " + limitData.size(), "loadFrist: ");
-        if (listIndex >= maxSize + 20) {
-            Log.d(TAG + " " + listIndex + " " + maxSize + 20, " loadFrist: ");
-            for (int x = listIndex - maxSize; x >= listIndex - maxSize - 20; x--) {
-                Log.d(TAG + " " + x, " loadFrist: ");
+        //Log.d(TAG + " " + limitData.size(), "loadFrist: ");
+        int jump = 20;
+        if (listIndex > maxSize && listIndex < maxSize + jump)
+            jump = listIndex - maxSize;
+        if (listIndex > maxSize) {
+
+            //Log.d(TAG + " " + listIndex + " " + maxSize + 20, " loadFrist: ");
+            for (int x = listIndex - maxSize; x >= listIndex - maxSize - jump; x--) {
+                //      Log.d(TAG + " " + x, " loadFrist: ");
                 limitData.add(0, newData.get(x));
             }
-            for (int i = 0; i < 20; i++)
-                limitData.remove(limitData.size() - 1);
+            limitData = setAddsToList(limitData, 0, jump);
+            if (limitData.size() >= maxSize + jump) {
+                int delet = limitData.size() - maxSize + jump / 2;
+                Log.d(TAG + " " + delet, "getAddsIndex: ");
+
+                for (int i = 0; i < jump + delet; i++)
+                    limitData.remove(limitData.size() - 1);
+            }
+            addIndex = getAddsIndex(limitData);
+            final int finalJump = jump;
             mNewsList.post(new Runnable() {
                 @Override
                 public void run() {
-                    mAdapter.setdata(limitData);
+                    mAdapter.setdata(limitData, addIndex);
+                    layoutManager.scrollToPosition(finalJump);
+                    setUpAndLoadNativeExpressAds(ITEMS_PER_AD, finalJump / ITEMS_PER_AD);
                 }
 
             });
-            listIndex -= 20;
+            listIndex -= jump;
         }
 
     }
 
     public void setMore() {
         int listIneex = listIndex;
-        Log.d(TAG + " " + limitData.size(), "setMore: ");
-        if (listIneex >= maxSize) {
-            Log.d(TAG + "ss", "setMore: ");
-            for (int i = 0; i < 20; i++)
-                limitData.remove(0);
+        if (listIneex >= newData.size())
+            return;
+        // Log.d(TAG + " " + limitData.size(), "setMore: ");
 
-
-            listIneex = 80;
-        }
 
         if (listIneex != 0)
             if (listIndex < newData.size()) {
@@ -280,12 +308,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     jump = newData.size() - listIneex + 1;
                 for (int i = listIndex; i < listIndex + jump; i++)
                     limitData.add(newData.get(i));
+                final int start = addIndex.size();
+                limitData = setAddsToList(limitData, limitData.size() - jump + ITEMS_PER_AD);
+
+                if (limitData.size() >= maxSize + jump) {
+                    int delet = limitData.size() - maxSize + jump / 2;
+                    Log.d(TAG + " " + delet, "getAddsIndex: ");
+
+                    for (int i = 0; i < jump + delet; i++)
+                        limitData.remove(0);
+
+
+                }
+                addIndex = getAddsIndex(limitData);
                 listIndex += jump;
-                Log.d(TAG + " " + listIndex + " " + listIneex, " setMore: ");
+
+                //Log.d(TAG + " " + listIndex + " " + listIneex, " setMore: ");
+                final int finalJump = jump;
                 mNewsList.post(new Runnable() {
                     @Override
                     public void run() {
-                        mAdapter.setdata(limitData);
+                        mAdapter.setdata(limitData, addIndex);
+                        int pos = limitData.size() - finalJump;
+
+                        //  Log.d(TAG, "run2: "+pos+ " "+finalJump+" "+limitData.size());
+                        layoutManager.scrollToPosition(pos);
+                        setUpAndLoadNativeExpressAds(start);
+
                     }
                 });
 
@@ -302,44 +351,244 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void setUpAndLoadNativeExpressAds() {
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        final int width = size.x;
+
         // Use a Runnable to ensure that the RecyclerView has been laid out before setting the
         // ad size for the Native Express ad. This allows us to set the Native Express ad's
         // width to match the full width of the RecyclerView.
-        if (newData != null) {
+        if (limitData != null) {
             mNewsList.post(new Runnable() {
                 @Override
                 public void run() {
+
+
                     final float scale = MainActivity.this.getResources().getDisplayMetrics().density;
-                    int w = MainActivity.this.getResources().getDisplayMetrics().widthPixels;
-                    Log.d(scale + " " + w + " ", "run: ");
+                    //int w = MainActivity.this.getResources().getDisplayMetrics().widthPixels;
+                    AppBarLayout c = (AppBarLayout) findViewById(R.id.width);
+                    final int adWidth = c.getWidth();
+                    Log.d(TAG, "run: " + adWidth);
+                    // Log.d(scale + " " + w + " ", "run: ");
                     // Set the ad size and ad unit ID for each Native Express ad in the items list.
-                    for (int i = ITEMS_PER_AD; i <= newData.size(); i += ITEMS_PER_AD) {
+                    for (String ind : addIndex) {
+                        MyAdd m = (MyAdd) limitData.get(Integer.parseInt(ind));
+                        if (!m.isReady()) {
+
                         final NativeExpressAdView adView =
-                                (NativeExpressAdView) newData.get(i);
+                                m.getAdView();
+                            VideoController mVideoController;
+                            adView.setVideoOptions(new VideoOptions.Builder()
+                                    .setStartMuted(true)
+                                    .build());
+                            //mVideoController = adView.getVideoController();
                         //final LinearLayout cardView = (LinearLayout) findViewById(R.id.lll);
-                        final int adWidth = width - 16
-                                - 16;
+
                         AdSize adSize = new AdSize((int) (adWidth / scale), NATIVE_EXPRESS_AD_HEIGHT);
-                        if (adView.getAdSize() == null) {
+
                             adView.setAdSize(adSize);
                             adView.setAdUnitId(AD_UNIT_ID);
-                        }
+                            m.setReady(true);
+
                     }
-
-
+                    }
                     // Load the first Native Express ad in the items list.
 
-                    loadNativeExpressAd(ITEMS_PER_AD);
+                    loadNativeExpressAd(0);
 
                 }
             });
         }
     }
 
+    private void setUpAndLoadNativeExpressAds(final int index) {
+        if (index - 1 < 0)
+            return;
+
+        // Use a Runnable to ensure that the RecyclerView has been laid out before setting the
+        // ad size for the Native Express ad. This allows us to set the Native Express ad's
+        // width to match the full width of the RecyclerView.
+        if (limitData != null) {
+            mNewsList.post(new Runnable() {
+                @Override
+                public void run() {
+                    final float scale = MainActivity.this.getResources().getDisplayMetrics().density;
+                    //int w = MainActivity.this.getResources().getDisplayMetrics().widthPixels;
+                    AppBarLayout c = (AppBarLayout) findViewById(R.id.width);
+                    final int adWidth = c.getWidth() - c.getPaddingLeft()
+                            - c.getPaddingRight();
+                    // Log.d(scale + " " + w + " "+" "+width, "run: ");
+                    // Set the ad size and ad unit ID for each Native Express ad in the items list.
+                    for (int i = index - 1; i < addIndex.size(); i++) {
+                        String ind = addIndex.get(i);
+                        MyAdd m = (MyAdd) limitData.get(Integer.parseInt(ind));
+                        if (!m.isReady()) {
+                            final NativeExpressAdView adView = m.getAdView();
+                            //final LinearLayout cardView = (LinearLayout) findViewById(R.id.lll);
+
+                            AdSize adSize = new AdSize((int) (adWidth / scale), NATIVE_EXPRESS_AD_HEIGHT);
+
+                            adView.setAdSize(adSize);
+
+                            adView.setAdUnitId(AD_UNIT_ID);
+                            m.setReady(true);
+
+                        }
+                    }
+
+
+                    // Load the first Native Express ad in the items list.
+
+                    loadNativeExpressAd(index);
+
+                }
+            });
+        }
+    }
+
+    private void setUpAndLoadNativeExpressAds(final int startIndex, final int finshIndex) {
+
+
+        // Use a Runnable to ensure that the RecyclerView has been laid out before setting the
+        // ad size for the Native Express ad. This allows us to set the Native Express ad's
+        // width to match the full width of the RecyclerView.
+        if (limitData != null) {
+            mNewsList.post(new Runnable() {
+                @Override
+                public void run() {
+                    final float scale = MainActivity.this.getResources().getDisplayMetrics().density;
+                    // int w = MainActivity.this.getResources().getDisplayMetrics().widthPixels;
+                    // Log.d(scale + " " + w + " ", "run: ");
+                    // Set the ad size and ad unit ID for each Native Express ad in the items list.
+//                    if(finshIndex >addIndex.size())
+                    AppBarLayout c = (AppBarLayout) findViewById(R.id.width);
+                    final int adWidth = c.getWidth() - c.getPaddingLeft()
+                            - c.getPaddingRight();
+//
+                    for (int i = startIndex; i < finshIndex; i++) {
+                        String ind = addIndex.get(i);
+                        MyAdd m = (MyAdd) limitData.get(Integer.parseInt(ind));
+                        if (m.isReady()) {
+                            final NativeExpressAdView adView = m.getAdView();
+                            //final LinearLayout cardView = (LinearLayout) findViewById(R.id.lll);
+
+
+                            AdSize adSize = new AdSize((int) (adWidth / scale), NATIVE_EXPRESS_AD_HEIGHT);
+
+                            adView.setAdSize(adSize);
+                            adView.setAdUnitId(AD_UNIT_ID);
+                            m.setReady(true);
+                        }
+                    }
+
+
+                    // Load the first Native Express ad in the items list.
+
+                    loadNativeExpressAd(startIndex, finshIndex);
+
+                }
+            });
+        }
+    }
+
+    private void loadNativeExpressAd(final int indexx) {
+        if (indexx >= addIndex.size())
+            return;
+        int index = Integer.parseInt(addIndex.get(indexx));
+
+        if (index >= limitData.size()) {
+            return;
+        }
+
+        // Log.d(TAG+ " "+ index, "loadNativeExpressAd: ");
+
+
+        Object item = limitData.get(index);
+
+        if (!(item instanceof MyAdd)) {
+            throw new ClassCastException("Expected item at index " + index + " to be a Native"
+                    + " Express ad.");
+        }
+        MyAdd m = (MyAdd) item;
+        if (m.isReady() && !m.isLoaded()) {
+
+            final NativeExpressAdView adView = m.getAdView();
+
+            // Set an AdListener on the NativeExpressAdView to wait for the previous Native Express ad
+            // to finish loading before loading the next ad in the items list.
+            adView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    // The previous Native Express ad loaded successfully, call this method again to
+                    // load the next ad in the items list.
+
+                    loadNativeExpressAd(indexx + 1);
+
+
+                    // Log.d(index + ITEMS_PER_AD + " ", "onAdLoaded: ");
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    // The previous Native Express ad failed to load. Call this method again to load
+                    // the next ad in the items list.
+                    Log.e("ads", "The previous Native Express ad failed to load. Attempting to"
+                            + " load the next Native Express ad in the items list." + errorCode);
+
+                    loadNativeExpressAd(indexx + 1);
+                    adView.setVisibility(View.GONE);
+
+                }
+            });
+
+            // Load the Native Express ad.
+            adView.loadAd(new AdRequest.Builder().addTestDevice("ca-app-pub-3940256099942544/6300978111").addTestDevice("5FEBBFA12C1FD5271E42652F4EF7BD25").build());
+            m.setLoaded(true);
+        }
+    }
+
+    private void loadNativeExpressAd(final int startIndex, final int finshIndex) {
+        if (startIndex >= finshIndex)
+            return;
+
+        Object item = limitData.get(startIndex);
+        if (!(item instanceof MyAdd)) {
+            throw new ClassCastException("Expected item at index " + startIndex + " to be a Native"
+                    + " Express ad.");
+        }
+        MyAdd m = (MyAdd) item;
+        if (m.isReady() && !m.isLoaded()) {
+            final NativeExpressAdView adView = m.getAdView();
+
+            // Set an AdListener on the NativeExpressAdView to wait for the previous Native Express ad
+            // to finish loading before loading the next ad in the items list.
+            adView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    // The previous Native Express ad loaded successfully, call this method again to
+                    // load the next ad in the items list.
+
+                    loadNativeExpressAd(startIndex + 1, finshIndex);
+
+                    // Log.d(index + ITEMS_PER_AD + " ", "onAdLoaded: ");
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    // The previous Native Express ad failed to load. Call this method again to load
+                    // the next ad in the items list.
+                    Log.e("MainActivity", "The previous Native Express ad failed to load. Attempting to"
+                            + " load the next Native Express ad in the items list." + errorCode);
+
+                    loadNativeExpressAd(startIndex + 1, finshIndex);
+
+                }
+            });
+
+            // Load the Native Express ad.
+            adView.loadAd(new AdRequest.Builder().build());
+        }
+        m.setLoaded(true);
+    }
 
     private void createAdd() {
         AdView mAdView = (AdView) findViewById(R.id.ad_view);
@@ -430,49 +679,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    private void loadNativeExpressAd(final int index) {
 
-        if (index >= newData.size()) {
-            return;
-        }
-
-        Object item = newData.get(index);
-        if (!(item instanceof NativeExpressAdView)) {
-            throw new ClassCastException("Expected item at index " + index + " to be a Native"
-                    + " Express ad.");
-        }
-
-        final NativeExpressAdView adView = (NativeExpressAdView) item;
-
-        // Set an AdListener on the NativeExpressAdView to wait for the previous Native Express ad
-        // to finish loading before loading the next ad in the items list.
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                // The previous Native Express ad loaded successfully, call this method again to
-                // load the next ad in the items list.
-
-                loadNativeExpressAd(index + ITEMS_PER_AD);
-
-                // Log.d(index + ITEMS_PER_AD + " ", "onAdLoaded: ");
-            }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                // The previous Native Express ad failed to load. Call this method again to load
-                // the next ad in the items list.
-                Log.e("MainActivity", "The previous Native Express ad failed to load. Attempting to"
-                        + " load the next Native Express ad in the items list." + errorCode);
-
-                loadNativeExpressAd(index + ITEMS_PER_AD);
-
-            }
-        });
-
-        // Load the Native Express ad.
-        adView.loadAd(new AdRequest.Builder().build());
-    }
 
 
 
@@ -507,6 +714,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onOptionsItemSelected(item);
     }
 
+    private int[] getlistin() {
+        int visibleItemCount = layoutManager.getChildCount();
+        int totalItemCount = layoutManager.getItemCount();
+        int pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+        return new int[]{visibleItemCount, totalItemCount, pastVisiblesItems};
+    }
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Set<String> sources = NewsPreferencesUtils.getPreferredSources(context);
@@ -558,10 +771,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if (search_state) {
                 error.setText(R.string.news_search_empty);
                 search_state = false;
-            }
-            Log.d("data is empty", "onLoadFinished: ");
+            } else error.setText(R.string.empty_recycle);
+            // Log.d("data is empty", "onLoadFinished: ");
             if (!loadingState)
                 error.setVisibility(View.VISIBLE);
+            if (loadingState) {
+                error.setVisibility(View.INVISIBLE);
+                loading.setProgress(View.VISIBLE);
+                return;
+            }
         } else {
             if (!loadingState)
                 error.setVisibility(View.INVISIBLE);
@@ -590,12 +808,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             for (int i = listIndex - 81; i < listIndex; i++)
                                 limitData.add(newData.get(i));
                             //Log.d(TAG + " " + limitData.size(), "onLoadFinished: ");
-                            mAdapter.setdata(limitData);
+                            limitData = setAddsToList(limitData);
+                            addIndex = getAddsIndex(limitData);
+                            mAdapter.setdata(limitData, addIndex);
+                            in = getlistin();
+                            setUpAndLoadNativeExpressAds();
                         } else {
                             for (int i = 0; i < listIndex; i++)
                                 limitData.add(newData.get(i));
                             //Log.d(TAG + " " + limitData.size(), "onLoadFinished: ");
-                            mAdapter.setdata(limitData);
+                            limitData = setAddsToList(limitData);
+                            addIndex = getAddsIndex(limitData);
+                            mAdapter.setdata(limitData, addIndex);
+                            setUpAndLoadNativeExpressAds();
                         }
                     } else {
                         marge();
@@ -606,10 +831,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 marge();
             }
 
+
             // setUpAndLoadNativeExpressAds();
 
         }
-        Log.d(TAG + " " + pos, " onLoadFinished: ");
+        //Log.d(TAG + " " + pos, " onLoadFinished: ");
         if (pos > 0)
             layoutManager.scrollToPosition(pos);
         if (!loadingState)
@@ -618,16 +844,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+
     public void marge() {
-        for (int i = 0; i < 20; i++)
+        int jup = 20;
+        if (newData.size() < jup)
+            jup = newData.size();
+        for (int i = 0; i < jup; i++)
             limitData.add(newData.get(i));
-        listIndex = 20;
-        mAdapter.setdata(limitData);
+        limitData = setAddsToList(limitData);
+        addIndex = getAddsIndex(limitData);
+        listIndex = jup;
+        mAdapter.setdata(limitData, addIndex);
+        setUpAndLoadNativeExpressAds();
     }
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Log.d(TAG, "onLoaderReset: ");
-        mAdapter.setdata(null);
+        // Log.d(TAG, "onLoaderReset: ");
+        mAdapter.setdata(null, null);
 
         loader.reset();
     }
@@ -653,10 +886,47 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         for (int i = ITEMS_PER_AD; i <= data.size(); i += ITEMS_PER_AD) {
             final NativeExpressAdView adView = new NativeExpressAdView(MainActivity.this);
-            data.add(i, adView);
+            MyAdd my = new MyAdd();
+            my.setAdView(adView);
+            data.add(i, my);
+
             //Log.d(i + " ", "onAdLoaded: ");
         }
         return data;
+    }
+
+    public List<Object> setAddsToList(List<Object> data, int index) {
+
+        for (int i = index; i <= limitData.size(); i += ITEMS_PER_AD) {
+            final NativeExpressAdView adView = new NativeExpressAdView(MainActivity.this);
+            MyAdd my = new MyAdd();
+            my.setAdView(adView);
+            data.add(i, my);
+            //Log.d(i + " ", "onAdLoaded: ");
+        }
+        return data;
+    }
+
+    public List<Object> setAddsToList(List<Object> data, int fristIndex, int lastIndex) {
+
+        for (int i = ITEMS_PER_AD; i <= lastIndex; i += ITEMS_PER_AD) {
+            final NativeExpressAdView adView = new NativeExpressAdView(MainActivity.this);
+            MyAdd my = new MyAdd();
+            my.setAdView(adView);
+            data.add(i, my);
+            //Log.d(i + " ", "onAdLoaded: ");
+        }
+        return data;
+    }
+
+    public ArrayList<String> getAddsIndex(List<Object> data) {
+        ArrayList<String> index = new ArrayList<String>();
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i) instanceof MyAdd)
+                index.add(i + "");
+        }
+        Log.d(TAG, "getAddsIndex: " + index);
+        return index;
     }
 
     public List<Object> setDataToList(Cursor c) {
@@ -735,5 +1005,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //       Log.d(savedInstanceState.getInt(LIST_STATE_KEY)+TAG, "onRestoreInstanceState: ");
         pos = savedInstanceState.getInt(LIST_STATE_KEY);
         //mNewsList.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(LIST_STATE_KEY));
+    }
+
+    protected boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        final int resultCode = apiAvailability.isGooglePlayServicesAvailable(context);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                Dialog dialog = apiAvailability.getErrorDialog(this, resultCode,
+                        PLAY_SERVICES_RESOLUTION_REQUEST);
+                if (dialog != null) {
+                    dialog.show();
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        public void onDismiss(DialogInterface dialog) {
+                            if (ConnectionResult.SERVICE_INVALID == resultCode) finish();
+                        }
+                    });
+                    return false;
+                }
+            }
+
+            return false;
+        }
+        return true;
     }
 }

@@ -164,7 +164,8 @@ public class  NewSpi {
         {
             ContentValues contentValues = new ContentValues();
             JSONObject object = jsonArray.getJSONObject(s);
-
+            if (object.get(SOURCES_CATGORY).equals("music") || object.get(SOURCES_CATGORY).equals("entertainment"))
+                break;
             contentValues.put(NewsContract.NewsSources.News_Sources_Id, object.getString(SOURCES_ID));
             contentValues.put(NewsContract.NewsSources.News_Sources_Name, object.getString(SOURCES_NAME));
             contentValues.put(NewsContract.NewsSources.Category, object.getString(SOURCES_CATGORY));

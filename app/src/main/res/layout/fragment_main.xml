@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
 
     android:layout_height="match_parent"
+
     tools:context="com.example.home_.news.MainActivityFragment"
     tools:showIn="@layout/activity_main">
     <FrameLayout
@@ -22,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/lightPrimaryColor"
-            android:padding="8dp"
+
 
             android:scrollbars="vertical"
             tools:layout_editor_absoluteX="8dp"

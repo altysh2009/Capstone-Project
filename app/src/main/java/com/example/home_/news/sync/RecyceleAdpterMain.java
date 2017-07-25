@@ -17,18 +17,24 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.home_.news.MyAdd;
 import com.example.home_.news.MyObject;
 import com.example.home_.news.R;
 import com.google.android.gms.ads.NativeExpressAdView;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int NewsDataViewType = 0;
     private final int AddsViewType = 1;
+    private ArrayList<String> addIndex;
     private ReciveClick mReciveClick;
     private List<Object> c;
     private Context context;
+    private Boolean scrolling = true;
 
     public RecyceleAdpterMain(ReciveClick r) {
         mReciveClick = r;
@@ -53,20 +59,26 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
+    public long getItemId(int position) {
+        return c.get(position).hashCode();
+    }
+
+    @Override
     public int getItemViewType(int position) {
-//        return (position % MainActivity.ITEMS_PER_AD == 0 && position != 0) ? AddsViewType
-//                : NewsDataViewType;
-        return NewsDataViewType;
+        return (c.get(position) instanceof MyAdd) ? AddsViewType
+                : NewsDataViewType;
+        //       return NewsDataViewType;
 
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder h, int position) {
         int viewType = getItemViewType(position);
+        Log.d(TAG, "getAddsIndex: " + position);
         switch (viewType) {
 
             case NewsDataViewType:
-                Log.d("new data", "onBindViewHolder: ");
+                // Log.d("new data", "onBindViewHolder: ");
                 if (c != null) {
                     final RecycelHolder holder = (RecycelHolder) h;
                     MyObject m = (MyObject) c.get(position);
@@ -92,6 +104,7 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
                     holder.url = m.getUrl();
                     holder.date.setText(m.getDate());
                     holder.p.setVisibility(View.VISIBLE);
+                    // if(scrolling)
             Glide.with(holder.context)
                     .load(image)
                     .listener(new RequestListener<String, GlideDrawable>() {
@@ -110,21 +123,19 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .skipMemoryCache(true)
                     .into(holder.imageView);
+                    //  else holder.p.setVisibility(View.GONE);
         }
                 break;
             default:
-                Log.d("ads data", "onBindViewHolder: ");
+                // Log.d("ads data", "onBindViewHolder: ");
 
                 NativeExpressAdViewHolder nativeExpressHolder =
                         (NativeExpressAdViewHolder) h;
+                MyAdd m = (MyAdd) c.get(position);
                 NativeExpressAdView adView =
-                        (NativeExpressAdView) c.get(position);
+                        m.getAdView();
                 ViewGroup adCardView = (ViewGroup) nativeExpressHolder.itemView;
-                // The NativeExpressAdViewHolder recycled by the RecyclerView may be a different
-                // instance than the one used previously for this position. Clear the
-                // NativeExpressAdViewHolder of any subviews in case it has a different
-                // AdView associated with it, and make sure the AdView for this position doesn't
-                // already have a parent of a different recycled NativeExpressAdViewHolder.
+
                 if (adCardView.getChildCount() > 0) {
                     adCardView.removeAllViews();
                 }
@@ -141,7 +152,7 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemCount() {
         if (c != null) {
-            Log.d(c.size() + " ", "getItemCount: ");
+            // Log.d(c.size() + " ", "getItemCount: ");
             return c.size();
         }
 
@@ -149,19 +160,29 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
             return 0;
     }
 
-    public void setdata(List<Object> cursor) {
+    public void setdata(List<Object> cursor, ArrayList<String> addIndex) {
 
         c = cursor;
+        this.addIndex = addIndex;
         notifyDataSetChanged();
     }
 
     @Override
     public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
+
         ImageView imageView = (ImageView) holder.itemView.findViewById(R.id.item_image);
         if (imageView != null)
             Glide.clear(imageView);
         // holder.contentsTarget = null;
+    }
+
+    public Boolean getScrolling() {
+        return scrolling;
+    }
+
+    public void setScrolling(Boolean scrolling) {
+        this.scrolling = scrolling;
     }
 
     public interface ReciveClick {
