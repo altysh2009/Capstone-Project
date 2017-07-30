@@ -90,15 +90,15 @@ public class WebViewActivity extends AppCompatActivity {
                         switch (which) {
                             case R.id.share_face:
                                 shareFacebook(url);
-                                // TODO when help menu/button is clicked
+
                                 break;
                             case R.id.share_gmail:
                                 shareGoogle(url);
-                                // TODO when call menu/button is clicked
+
                                 break;
                             case R.id.share_twitter:
                                 shareTwitter(url);
-                                // TODO when upload menu/button is clicked
+
                                 break;
 
                         }
