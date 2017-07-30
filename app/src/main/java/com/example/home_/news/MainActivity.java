@@ -1,5 +1,6 @@
 package com.example.home_.news;
 
+import android.animation.ObjectAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     int pos = 0;
     ArrayList<String> addIndex = new ArrayList<>();
     PackageInfo info;
+    ObjectAnimator fadeIn;
     private FloatingActionButton fab;
     private Boolean search_state = false;
     private Boolean loadingState = false;
@@ -244,7 +246,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 }
             }
+
         });
+        fadeIn = ObjectAnimator.ofFloat(mNewsList, "alpha", .3f, 1f);
+        fadeIn.setDuration(2000);
+
         cancelBottom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -906,6 +912,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             limitData = setAddsToList(limitData);
                             addIndex = getAddsIndex(limitData);
                             mAdapter.setdata(limitData, addIndex);
+                            fadeIn.start();
                             in = getlistin();
                             setUpAndLoadNativeExpressAds();
                         } else {
@@ -916,6 +923,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             limitData = setAddsToList(limitData);
                             addIndex = getAddsIndex(limitData);
                             mAdapter.setdata(limitData, addIndex);
+                            fadeIn.start();
                             setUpAndLoadNativeExpressAds();
                         }
                     } else {
@@ -951,6 +959,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         addIndex = getAddsIndex(limitData);
         listIndex = jup;
         mAdapter.setdata(limitData, addIndex);
+        fadeIn.start();
         setUpAndLoadNativeExpressAds();
     }
     @Override
