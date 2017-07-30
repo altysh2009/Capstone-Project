@@ -11,6 +11,7 @@ public class NewsContract {
     private static final Uri DATA_TABLE = Uri.parse("content://" + Authority);
     public static final Uri sources = DATA_TABLE.buildUpon().appendPath(NewsSources.TABLE_NAME).build();
     public static final Uri articles = DATA_TABLE.buildUpon().appendPath(NewsArticles.TABLE_NAME).build();
+    public static final Uri deleteTable = DATA_TABLE.buildUpon().appendPath(NewsArticles.TABLE_NAME).appendPath("delete").build();
     private static final Uri DATA_Update = Uri.parse(Authority);
 
     public static final class NewsSources implements BaseColumns {

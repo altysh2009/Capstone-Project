@@ -20,7 +20,7 @@ import com.example.home_.news.MainActivity;
 public class MyContent extends ContentProvider {
     final int articales = 100;
     final int newSources = 200;
-    final int revies = 300;
+    final int delete = 300;
     final int video = 400;
     NewDbHelper dbHelper;
     UriMatcher matcher = createMatcher();
@@ -29,6 +29,7 @@ public class MyContent extends ContentProvider {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(NewsContract.Authority, NewsContract.NewsArticles.TABLE_NAME, articales);
         uriMatcher.addURI(NewsContract.Authority, NewsContract.NewsSources.TABLE_NAME, newSources);
+        uriMatcher.addURI(NewsContract.Authority, NewsContract.NewsSources.TABLE_NAME + "/delete", delete);
 
         return uriMatcher;
     }
@@ -122,6 +123,37 @@ public class MyContent extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        // Log.d("mma", "delete: ");
+
+
+        // Log.d("delete", "delete: ");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.NewsArticles.TABLE_NAME);
+        final String SQL_CREATE_NEWS_ARTICLES_TABLE =
+
+                "CREATE TABLE " + NewsContract.NewsArticles.TABLE_NAME + " (" +
+
+
+                        NewsContract.NewsArticles._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+
+                        NewsContract.NewsArticles.Title + " STRING NOT NULL , " +
+
+                        NewsContract.NewsArticles.Image_Url + " STRING  ," +
+
+                        NewsContract.NewsArticles.Descrption + " STRING  , " +
+                        NewsContract.NewsArticles.Url + " STRING NOT NULL , " +
+
+                        NewsContract.NewsArticles.Sorded_By + " STRING  , " +
+                        NewsContract.NewsArticles.Date + " STRING  , " +
+
+                        NewsContract.NewsArticles.Author + " STRING  , " +
+                        NewsContract.NewsArticles.Source_Name + " STRING NOT NULL , " +
+                        NewsContract.NewsArticles.Source_Readable_Name + " STRING NOT NULL , " +
+
+
+                        " UNIQUE (" + NewsContract.NewsArticles.Url + ") ON CONFLICT IGNORE);";
+        sqLiteDatabase.execSQL(SQL_CREATE_NEWS_ARTICLES_TABLE);
 
         return 0;
     }

@@ -25,8 +25,8 @@ public class NotifcationNews {
                 .setLargeIcon(BitmapFactory.decodeResource(
                         context.getResources(),
                         R.drawable.vlarge))
-                .setContentTitle("new news")
-                .setContentText("new newss")
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText("Come to see what's new")
                 .setAutoCancel(true);
         Intent detailIntentForToday = new Intent(context, MainActivity.class);
         //detailIntentForToday.setData(todaysWeatherUri);

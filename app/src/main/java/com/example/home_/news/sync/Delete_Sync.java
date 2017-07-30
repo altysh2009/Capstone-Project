@@ -6,11 +6,12 @@ import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
 
 /**
- * Created by Home- on 20/06/2017.
+ * Created by Home- on 30/07/2017.
  */
 
-public class FireBaseDispatcherTask extends JobService {
+public class Delete_Sync extends JobService {
     private AsyncTask<Void, Void, Void> mfetchdata;
+
     @Override
     public boolean onStartJob(final JobParameters job) {
         mfetchdata = new AsyncTask<Void, Void, Void>() {

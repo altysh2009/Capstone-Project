@@ -98,7 +98,7 @@ public class  NewSpi {
 
     public static URL[] getMultiSources(String[] sources)
     {
-        //Log.d("Multi", "getMultiSources: ");
+        Log.d("Multi", "getMultiSources: ");
         URL[] urls = new URL[sources.length];
         int index = 0;
         for (String i:sources)
@@ -206,7 +206,7 @@ public class  NewSpi {
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        //Log.d("sync", "getResponseFromHttpUrl: ");
+        Log.d("sync", "getResponseFromHttpUrl: ");
         try {
             InputStream in = urlConnection.getInputStream();
 

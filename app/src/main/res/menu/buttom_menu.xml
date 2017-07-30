@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/share_face"
+        android:icon="@drawable/facebook_logo"
+        android:title="@string/face" />
+    <item
+        android:id="@+id/share_gmail"
+        android:icon="@drawable/google_plus_logo"
+        android:title="@string/gmail" />
+    <item
+        android:id="@+id/share_twitter"
+        android:icon="@drawable/twitter"
+        android:title="@string/twitter" />
+</menu>

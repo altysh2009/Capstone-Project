@@ -1,19 +1,22 @@
 package com.example.home_.news;
 
-import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,21 +31,26 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.home_.news.data.NewsContract;
 import com.example.home_.news.data.NewsPreferencesUtils;
 import com.example.home_.news.sync.NewsJopInitialize;
 import com.example.home_.news.sync.RecyceleAdpterMain;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.NativeExpressAdView;
-import com.google.android.gms.ads.VideoController;
 import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.plus.PlusShare;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,11 +64,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int NATIVE_EXPRESS_AD_HEIGHT = 150;
     // The Native Express ad unit ID.
     private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1072772517";
-    private static Bundle mBundleRecyclerViewState;
+
     final int PLAY_SERVICES_RESOLUTION_REQUEST = 8000;
     final int maxSize = 50;
     private final String LIST_STATE_KEY = "listPostion";
-    private final String LIST_DATA_KEY = "List Data";
+
     private final String SEARCH_KEY_WORD = "keyword";
     int listIndex = 0;
     String TAG = "MainActivity";
@@ -78,33 +86,35 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     List<Object> limitData;
     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
     int pos = 0;
-    ArrayList<String> addIndex = new ArrayList<String>();
+    ArrayList<String> addIndex = new ArrayList<>();
+    PackageInfo info;
+    private FloatingActionButton fab;
     private Boolean search_state = false;
     private Boolean loadingState = false;
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String s = intent.getAction();
-            if (s.equals(NewsContract.update)) {
-                // Log.d("update", "onReceive: ");
-                loadingState = false;
-                //loading.setVisibility(View.GONE);
-                getSupportLoaderManager().restartLoader(1, null, MainActivity.this);
-            }
-//            else if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION))
-//                Log.d("internertcheck", "onReceive: ");
-            else if (s.equals("android.intent.action.MANAGE_NETWORK_USAGE"))
-                Log.d("android.intent", "onReceive: ");
-            else if (s.equals("android.intent.action.EXTRA_NETWORK_TYPE"))
-                Log.d("EXTRA_NETWORK_TYPE", "onReceive: ");
-            else if (s.equals("android.net.conn.CONNECTIVITY_CHANGE"))
-                Log.d("CONNECTIVITY_CHANGE", "onReceive: ");
-            else if (s.equals(NewsContract.updating)) {
-                loadingState = true;
-                loading.setVisibility(View.VISIBLE);
-                error.setVisibility(View.INVISIBLE);
-                // loading.setVisibility(View.VISIBLE);
-                //Log.d(TAG, "onReceive: ");
+            switch (s) {
+                case NewsContract.update:
+                    loadingState = false;
+                    getSupportLoaderManager().restartLoader(1, null, MainActivity.this);
+                    break;
+                case "android.intent.action.MANAGE_NETWORK_USAGE":
+                    Log.d("android.intent", "onReceive: ");
+                    break;
+                case "android.intent.action.EXTRA_NETWORK_TYPE":
+                    Log.d("EXTRA_NETWORK_TYPE", "onReceive: ");
+                    break;
+                case "android.net.conn.CONNECTIVITY_CHANGE":
+                    Log.d("CONNECTIVITY_CHANGE", "onReceive: ");
+                    break;
+                case NewsContract.updating:
+                    loadingState = true;
+                    loading.setVisibility(View.VISIBLE);
+                    error.setVisibility(View.INVISIBLE);
+
+                    break;
             }
 
         }
@@ -138,10 +148,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        /*PackageInfo info;
+        try {
+            info = getPackageManager().getPackageInfo("com.example.home_.news", PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md;
+                md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String something = new String(Base64.encode(md.digest(), 0));
+                //String something = new String(Base64.encodeBytes(md.digest()));
+                Log.e("hash key", something);
+            }
+        } catch (PackageManager.NameNotFoundException e1) {
+            Log.e("name not found", e1.toString());
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("no such an algorithm", e.toString());
+        } catch (Exception e) {
+            Log.e("exception", e.toString());
+        }*/
         context = getApplicationContext();
+        checkPlayServices();
 
+
+        Twitter.initialize(this);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.ttoolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
@@ -190,12 +219,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.d(TAG, "onScrolled: ");
+                //Log.d(TAG, "onScrolled: ");
                 if (in != null && in.length > 0 && dx == -1 && dy == -1) {
                     int visibleItemCount = in[0];
                     int pastVisiblesItems = in[2];
                     int totalItemCount = in[1];
-                    Log.d(TAG + " " + visibleItemCount + " " + pastVisiblesItems + " " + totalItemCount, " onScrolled: ");
+                    if (pastVisiblesItems > 0)
+                        fab.setVisibility(View.VISIBLE);
+                    else if (listIndex >= 20 && listIndex < 40 && pastVisiblesItems == 0 && visibleItemCount < 2)
+                        fab.setVisibility(View.GONE);
+                    //Log.d(TAG + " " + visibleItemCount + " " + pastVisiblesItems + " " + totalItemCount, " onScrolled: ");
                 if (visibleItemCount + pastVisiblesItems >= totalItemCount && endend) {
                     setMore();
 
@@ -242,21 +275,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             }
         });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                limitData = new ArrayList<>();
+                marge();
+                layoutManager.scrollToPosition(0);
+                NewsPreferencesUtils.setPos(context, new HashSet<>(Arrays.asList(new String[]{"20", "0"})));
+
+            }
+        });
 
         createAdd();
         // requestNewInterstitial();
         // Log.d(TAG, "onCreate: ");
         getSupportLoaderManager().initLoader(1, null, this);
         //Log.d(TAG, "onCreate: ");
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NewsJopInitialize.startImmediateSync(context);
-            }
-        });
+
 
     }
+
 
     public void loadFrist() {
         //Log.d(TAG + " " + limitData.size(), "loadFrist: ");
@@ -343,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void serachData(String key) {
         Bundle b = new Bundle();
-        b.putString(SEARCH_KEY_WORD, key.toString());
+        b.putString(SEARCH_KEY_WORD, key);
         searchPrgress.setVisibility(View.VISIBLE);
         search_state = true;
         getSupportLoaderManager().destroyLoader(1);
@@ -374,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                         final NativeExpressAdView adView =
                                 m.getAdView();
-                            VideoController mVideoController;
+
                             adView.setVideoOptions(new VideoOptions.Builder()
                                     .setStartMuted(true)
                                     .build());
@@ -540,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             });
 
             // Load the Native Express ad.
-            adView.loadAd(new AdRequest.Builder().addTestDevice("ca-app-pub-3940256099942544/6300978111").addTestDevice("5FEBBFA12C1FD5271E42652F4EF7BD25").build());
+            adView.loadAd(new AdRequest.Builder().addTestDevice("ca-app-pub-3940256099942544/6300978111").addTestDevice("6EC15F3EEB74C3D7EBD0EF69AD20CB5A").addTestDevice("5FEBBFA12C1FD5271E42652F4EF7BD25").build());
             m.setLoaded(true);
         }
     }
@@ -585,7 +624,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             });
 
             // Load the Native Express ad.
-            adView.loadAd(new AdRequest.Builder().build());
+            adView.loadAd(new AdRequest.Builder().addTestDevice("ca-app-pub-3940256099942544/6300978111")
+                    .addTestDevice("6EC15F3EEB74C3D7EBD0EF69AD20CB5A")
+                    .addTestDevice("5FEBBFA12C1FD5271E42652F4EF7BD25").build());
         }
         m.setLoaded(true);
     }
@@ -679,10 +720,64 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    @Override
+    public void share(String thumb, int type) {
+        Log.d(TAG, "share: ");
+        switch (type) {
+            case R.id.share_twitter:
+                Log.d(TAG, "share: twitter");
+                shareTwitter(thumb);
+                break;
+            case R.id.share_gmail:
 
 
+                break;
+            case R.id.share_face:
+                Log.d(TAG, "share: face");
+                shareFacebook(thumb);
+                break;
+        }
+    }
+
+    @Override
+    public void share(String thumb, int type, String title) {
+        if (type == R.id.share_gmail) {
+            shareGoogle(thumb, title);
+        }
+    }
+
+    public void shareTwitter(String url) {
+        TweetComposer.Builder builder = new TweetComposer.Builder(this)
+                .text(url);
+
+        builder.show();
+    }
+
+    public void shareFacebook(String url) {
 
 
+        ShareLinkContent content = new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse(url))
+                .build();
+        ShareDialog shareDialog = new ShareDialog(MainActivity.this);
+        shareDialog.show(content, ShareDialog.Mode.AUTOMATIC);
+
+
+    }
+
+    public void shareGoogle(String url, String string) {
+        Intent shareIntent = new PlusShare.Builder(this)
+                .setType("text/plain")
+                .setText(string)
+                .setContentUrl(Uri.parse(url))
+                .getIntent();
+        try {
+            startActivityForResult(shareIntent, 0);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(MainActivity.this, "You haven't installed google+ on your device", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
 
     @Override
@@ -785,7 +880,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 error.setVisibility(View.INVISIBLE);
             // newData = setAddsToList(setDataToList(data));
             newData = setDataToList(data);
-            limitData = new ArrayList<Object>();
+            limitData = new ArrayList<>();
             Set<String> ind = NewsPreferencesUtils.getPos(context);
 
             try {
@@ -814,8 +909,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             in = getlistin();
                             setUpAndLoadNativeExpressAds();
                         } else {
-                            for (int i = 0; i < listIndex; i++)
+                            for (int i = 0; i < listIndex; i++) {
                                 limitData.add(newData.get(i));
+                            }
                             //Log.d(TAG + " " + limitData.size(), "onLoadFinished: ");
                             limitData = setAddsToList(limitData);
                             addIndex = getAddsIndex(limitData);
@@ -868,7 +964,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void theClickedItem(String thumb) {
         String[] inde = new String[]{listIndex + "", layoutManager.findFirstVisibleItemPosition() + ""};
-        NewsPreferencesUtils.setPos(context, new HashSet<String>(Arrays.asList(inde)));
+        NewsPreferencesUtils.setPos(context, new HashSet<>(Arrays.asList(inde)));
         loadAdd(thumb);
     }
 
@@ -876,11 +972,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void theClickedItem(String thumb, int id) {
         if (thumb.contains("http")) {
             String[] inde = new String[]{listIndex + "", layoutManager.findFirstVisibleItemPosition() + ""};
-            NewsPreferencesUtils.setPos(context, new HashSet<String>(Arrays.asList(inde)));
+            NewsPreferencesUtils.setPos(context, new HashSet<>(Arrays.asList(inde)));
             loadAdd(thumb, id);
 
         }
     }
+
 
     public List<Object> setAddsToList(List<Object> data) {
 
@@ -920,7 +1017,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public ArrayList<String> getAddsIndex(List<Object> data) {
-        ArrayList<String> index = new ArrayList<String>();
+        ArrayList<String> index = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i) instanceof MyAdd)
                 index.add(i + "");
@@ -930,7 +1027,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public List<Object> setDataToList(Cursor c) {
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
 
 
         while (c.moveToNext()) {
@@ -1007,26 +1104,48 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //mNewsList.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(LIST_STATE_KEY));
     }
 
-    protected boolean checkPlayServices() {
+    protected void checkPlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         final int resultCode = apiAvailability.isGooglePlayServicesAvailable(context);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (apiAvailability.isUserResolvableError(resultCode)) {
-                Dialog dialog = apiAvailability.getErrorDialog(this, resultCode,
-                        PLAY_SERVICES_RESOLUTION_REQUEST);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+// 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage(R.string.dialog_message)
+                        .setTitle(R.string.dialog_title);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        try {
+                            Log.d(TAG, "onClick: go to play store");
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.google.android.play.games")));
+                        } catch (Exception anfe) {
+                            Log.d(TAG, "onClick: go to website");
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.play.games")));
+                        }
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        finish();
+                    }
+                });
+
+
+// 3. Get the AlertDialog from create()
+                AlertDialog dialog = builder.create();
+
                 if (dialog != null) {
                     dialog.show();
-                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        public void onDismiss(DialogInterface dialog) {
-                            if (ConnectionResult.SERVICE_INVALID == resultCode) finish();
-                        }
-                    });
-                    return false;
+
+
                 }
             }
 
-            return false;
+
         }
-        return true;
+
     }
 }

@@ -2,12 +2,16 @@ package com.example.home_.news.sync;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -20,6 +24,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.home_.news.MyAdd;
 import com.example.home_.news.MyObject;
 import com.example.home_.news.R;
+import com.example.home_.news.data.NewsContract;
 import com.google.android.gms.ads.NativeExpressAdView;
 
 import java.util.ArrayList;
@@ -28,8 +33,8 @@ import java.util.List;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    final int AddsViewType = 1;
     private final int NewsDataViewType = 0;
-    private final int AddsViewType = 1;
     private ArrayList<String> addIndex;
     private ReciveClick mReciveClick;
     private List<Object> c;
@@ -72,7 +77,13 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder h, int position) {
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder h, int position) {
         int viewType = getItemViewType(position);
         Log.d(TAG, "getAddsIndex: " + position);
         switch (viewType) {
@@ -111,6 +122,7 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                             holder.p.setVisibility(View.GONE);
+                            holder.imageView.setImageResource(R.drawable.error);
                             return false;
                         }
 
@@ -119,10 +131,14 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
                             holder.p.setVisibility(View.GONE);
                             return false;
                         }
+
                     })
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .skipMemoryCache(true)
+                    .error(R.drawable.error)
+
                     .into(holder.imageView);
+
                     //  else holder.p.setVisibility(View.GONE);
         }
                 break;
@@ -167,15 +183,7 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyDataSetChanged();
     }
 
-    @Override
-    public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
 
-        ImageView imageView = (ImageView) holder.itemView.findViewById(R.id.item_image);
-        if (imageView != null)
-            Glide.clear(imageView);
-        // holder.contentsTarget = null;
-    }
 
     public Boolean getScrolling() {
         return scrolling;
@@ -190,9 +198,13 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         void theClickedItem(String thumb, int id);
 
+        void share(String thumb, int type);
+
+        void share(String thumb, int type, String title);
+
     }
 
-    class RecycelHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class RecycelHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView imageView;
         private TextView title;
         private TextView description;
@@ -202,21 +214,60 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
         private Context context;
         private String url;
         private ProgressBar p;
+        private ImageButton imageButton;
 
         public RecycelHolder(View itemView) {
             super(itemView);
             context = itemView.getContext();
             imageView = (ImageView) itemView.findViewById(R.id.item_image);
+            imageView.setOnClickListener(this);
             title = (TextView) itemView.findViewById(R.id.item_article_title);
             description = (TextView) itemView.findViewById(R.id.item_article_descrption);
             sourceName = (TextView) itemView.findViewById(R.id.item_source);
             sourceName.setTextColor(Color.BLUE);
+            sourceName.setOnClickListener(this);
             autherName = (TextView) itemView.findViewById(R.id.item_auther);
             autherName.setOnClickListener(this);
             title.setOnClickListener(this);
             description.setOnClickListener(this);
             p = (ProgressBar) itemView.findViewById(R.id.progressBar2);
             date = (TextView) itemView.findViewById(R.id.item_date);
+            imageButton = (ImageButton) itemView.findViewById(R.id.booo);
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    //creating a popup menu
+                    PopupMenu popup = new PopupMenu(context, imageButton);
+                    //inflating menu from xml resource
+                    popup.inflate(R.menu.buttom_menu);
+                    //adding click listener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.share_face:
+                                    //handle menu1 click
+                                    mReciveClick.share(url, R.id.share_face);
+                                    break;
+                                case R.id.share_gmail:
+                                    mReciveClick.share(url, R.id.share_gmail, title.getText().toString());
+
+                                    //handle menu2 click
+                                    break;
+                                case R.id.share_twitter:
+                                    mReciveClick.share(url, R.id.share_twitter);
+                                    //handle menu3 click
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
+                    //displaying the popup
+                    popup.show();
+
+                }
+            });
 
         }
 
@@ -229,6 +280,7 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
                     mReciveClick.theClickedItem(url);
                     break;
                 case R.id.item_image:
+                    mReciveClick.theClickedItem(url);
                     break;
                 case R.id.item_article_descrption:
                     description.setMaxLines(5);
@@ -236,15 +288,27 @@ public class RecyceleAdpterMain extends RecyclerView.Adapter<RecyclerView.ViewHo
                 case R.id.item_auther:
                     mReciveClick.theClickedItem(autherName.getText().toString(), R.id.item_auther);
                     break;
+                case R.id.item_source:
+                    Cursor c = context.getContentResolver().query(NewsContract.sources, null, NewsContract.NewsSources.News_Sources_Name + " =? ", new String[]{sourceName.getText().toString()}, null);
+                    String t = null;
+                    if (c != null) {
+                        while (c.moveToNext())
+                            t = c.getString(c.getColumnIndex(NewsContract.NewsSources.Url));
+                        if (t != null && t.length() != 0 && t.contains("http"))
+                            mReciveClick.theClickedItem(t);
+                        c.close();
+                    }
 
 
             }
 
 
         }
+
+
     }
 
-    public class NativeExpressAdViewHolder extends RecyclerView.ViewHolder {
+    private class NativeExpressAdViewHolder extends RecyclerView.ViewHolder {
 
         NativeExpressAdViewHolder(View view) {
             super(view);

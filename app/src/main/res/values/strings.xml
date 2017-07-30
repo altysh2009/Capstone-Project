@@ -103,5 +103,19 @@
     <string name="new_search_hint">Enter news Source OR any Title</string>
     <string name="news_search_empty">No data match try another world</string>
 
+    <string name="face">Share to FaceBook</string>
+    <string name="gmail">Share To Google+</string>
+    <string name="twitter">Share To Twitter</string>
+    <string name="facebook_key">1555278667876394</string>
+
+    <string name="app_logo_descrption">this is app logo</string>
+    <string name="cancel_descrption">cancel the search</string>
+    <string name="menu_descrption">share menu</string>
+    <string name="dialog_message">Google Play Services Not Found press OK To download</string>
+    <string name="dialog_title">Google play Services error</string>
+    <string name="ok">Go to Play Store</string>
+    <string name="cancel">Close</string>
+
 
 </resources>
+

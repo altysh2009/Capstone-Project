@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.example.home_.news.NewSpi;
 import com.example.home_.news.data.NewsContract;
@@ -35,6 +36,14 @@ public class NewTask {
         NotifcationNews.showNotifecation(context);
         if (c != null)
             c.close();
+
+    }
+
+    synchronized public static void deleteTask(Context context) {
+        Log.d("Dd", "deleteTask: ");
+        context.getContentResolver().delete(NewsContract.deleteTable, null, null);
+        task(context);
+
 
     }
 
