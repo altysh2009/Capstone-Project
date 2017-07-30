@@ -115,6 +115,7 @@
     <string name="dialog_title">Google play Services error</string>
     <string name="ok">Go to Play Store</string>
     <string name="cancel">Close</string>
+    <string name="toast_gmail">You haven\'t installed google+ on your device</string>
 
 
 </resources>

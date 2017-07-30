@@ -780,7 +780,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         try {
             startActivityForResult(shareIntent, 0);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(MainActivity.this, "You haven't installed google+ on your device", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.toast_gmail), Toast.LENGTH_SHORT).show();
         }
 
     }

@@ -86,7 +86,7 @@ public class NewsJopInitialize {
         /* Create the Job to periodically sync Sunshine */
         Job syncSunshineJob = dispatcher.newJobBuilder()
                 /* The Service that will be used to sync Sunshine's data */
-                .setService(Delete_Sync.class)
+                .setService(DeleteSync.class)
                 /* Set the UNIQUE tag used to identify this Job */
                 .setTag(NewsTag_delete)
                 /*

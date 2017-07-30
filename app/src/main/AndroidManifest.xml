@@ -53,7 +53,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".sync.Delete_Sync"
+            android:name=".sync.DeleteSync"
             android:exported="false" />
 
         <activity

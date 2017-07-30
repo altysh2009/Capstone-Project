@@ -9,7 +9,7 @@ import com.firebase.jobdispatcher.JobService;
  * Created by Home- on 30/07/2017.
  */
 
-public class Delete_Sync extends JobService {
+public class DeleteSync extends JobService {
     private AsyncTask<Void, Void, Void> mfetchdata;
 
     @Override
