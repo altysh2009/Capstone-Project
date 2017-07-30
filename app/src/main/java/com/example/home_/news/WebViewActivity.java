@@ -84,7 +84,7 @@ public class WebViewActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new BottomSheet.Builder(WebViewActivity.this).title("Bottom Menu Title").sheet(R.menu.buttom_menu).listener(new DialogInterface.OnClickListener() {
+                new BottomSheet.Builder(WebViewActivity.this).title(getString(R.string.menu_descrption)).sheet(R.menu.buttom_menu).listener(new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {

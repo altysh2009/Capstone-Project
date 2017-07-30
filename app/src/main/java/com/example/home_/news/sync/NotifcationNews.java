@@ -26,7 +26,7 @@ public class NotifcationNews {
                         context.getResources(),
                         R.drawable.vlarge))
                 .setContentTitle(context.getString(R.string.app_name))
-                .setContentText("Come to see what's new")
+                .setContentText(context.getString(R.string.new_news))
                 .setAutoCancel(true);
         Intent detailIntentForToday = new Intent(context, MainActivity.class);
         //detailIntentForToday.setData(todaysWeatherUri);

@@ -116,6 +116,7 @@
     <string name="ok">Go to Play Store</string>
     <string name="cancel">Close</string>
     <string name="toast_gmail">You haven\'t installed google+ on your device</string>
+    <string name="new_news">Come to see what\'s new</string>
 
 
 </resources>
