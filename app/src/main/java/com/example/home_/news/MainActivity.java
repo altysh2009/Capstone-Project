@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             limitData = setAddsToList(limitData, 0, jump);
             if (limitData.size() >= maxSize + jump) {
                 int delet = limitData.size() - maxSize + jump / 2;
-                Log.d(TAG + " " + delet, "getAddsIndex: ");
+                //Log.d(TAG + " " + delet, "getAddsIndex: ");
 
                 for (int i = 0; i < jump + delet; i++)
                     limitData.remove(limitData.size() - 1);
@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 if (limitData.size() >= maxSize + jump) {
                     int delet = limitData.size() - maxSize + jump / 2;
-                    Log.d(TAG + " " + delet, "getAddsIndex: " + newData.size() + " " + limitData.size());
+                    // Log.d(TAG + " " + delet, "getAddsIndex: " + newData.size() + " " + limitData.size());
 
                     for (int i = 0; i < jump + delet; i++)
                         limitData.remove(0);
@@ -1031,7 +1031,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             if (data.get(i) instanceof MyAdd)
                 index.add(i + "");
         }
-        Log.d(TAG, "getAddsIndex: " + index);
+        //Log.d(TAG, "getAddsIndex: " + index);
         return index;
     }
 

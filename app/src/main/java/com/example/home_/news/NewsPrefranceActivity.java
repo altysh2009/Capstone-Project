@@ -26,9 +26,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-/**
- * Created by Home- on 02/07/2017.
- */
 
 public class NewsPrefranceActivity extends AppCompatActivity {
     static Set<String> empty = new Set<String>() {
@@ -110,7 +107,7 @@ public class NewsPrefranceActivity extends AppCompatActivity {
             //Log.d(c.toString(), "  setAll: ");
             x++;
         }
-        Set<String> h = new HashSet<String>(Arrays.asList(change));
+        Set<String> h = new HashSet<>(Arrays.asList(change));
 
         ((MultiSelectListPreference) sharedPreferences).setValues(h);
     }
@@ -121,18 +118,18 @@ public class NewsPrefranceActivity extends AppCompatActivity {
         final String[] oo = old.toArray(new String[]{});
         String deff = "12";
 
-        Log.d("in", "removeAll: ");
+        //Log.d("in", "removeAll: ");
 
-        Log.d("equl", "removeAll: ");
+        //Log.d("equl", "removeAll: ");
         for (String q : oo) {
             // Log.d(q, "removeAll: ");
             if (!Arrays.asList(nn).contains(q)) {
 
                 deff = deff + " " + q;
-                Log.d(deff, "removeAll: ");
+                //Log.d(deff, "removeAll: ");
             }
         }
-        Log.d(nn.length + " " + oo.length + " ", "removeAll: ");
+        //Log.d(nn.length + " " + oo.length + " ", "removeAll: ");
         if (Arrays.asList(deff.split(" ")).contains("all")) {
             ((MultiSelectListPreference) sharedPreferences).setValues(empty);
             return true;
@@ -143,6 +140,7 @@ public class NewsPrefranceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_settings);
+        if (getSupportActionBar() != null)
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new NewsPrefranceFramgent()).commit();
     }
@@ -158,7 +156,7 @@ public class NewsPrefranceActivity extends AppCompatActivity {
     }
 
     public static class NewsPrefranceFramgent extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, android.app.LoaderManager.LoaderCallbacks<Cursor> {
-        static Context context;
+        Context context;
         MultiSelectListPreference sources_list;
         MultiSelectListPreference catgory_list;
         MultiSelectListPreference lang_list;
@@ -172,7 +170,7 @@ public class NewsPrefranceActivity extends AppCompatActivity {
                 CharSequence[] entries = new CharSequence[len];
                 CharSequence[] entryValues = new CharSequence[len];
 
-                Log.d(len + " ", "bindPreferenceSummaryToValue: ");
+                // Log.d(len + " ", "bindPreferenceSummaryToValue: ");
 
 
                 // Populate MultiSelectListPreference with entries for all available accounts
@@ -261,7 +259,7 @@ public class NewsPrefranceActivity extends AppCompatActivity {
                     sources[x] = c.getString(c.getColumnIndex(NewsContract.NewsSources.News_Sources_Id));
                     x++;
                 }
-                Set<String> h = new HashSet<String>(Arrays.asList(sources));
+                Set<String> h = new HashSet<>(Arrays.asList(sources));
                 source.setValues(h);
                 c.close();
             } else {
@@ -274,16 +272,16 @@ public class NewsPrefranceActivity extends AppCompatActivity {
             String[] s = new String[charSequence.length];
             for (int i = 0; i < charSequence.length; i++)
                 s[i] = charSequence[i].toString();
-            return new HashSet<String>(Arrays.asList(s));
+            return new HashSet<>(Arrays.asList(s));
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            Log.d(key, " onSharedPreferenceChanged: ");
+            //  Log.d(key, " onSharedPreferenceChanged: ");
 
             Preference preference = findPreference(key);
             if (preference instanceof MultiSelectListPreference) {
-                Log.d("true", "onSharedPreferenceChanged: ");
+                //Log.d("true", "onSharedPreferenceChanged: ");
                 if (key.equals(getString(R.string.sources_key))) {
 //                   Set<String> s = sharedPreferences.getStringSet(getString(R.string.sources_key), empty);
 //                   int q= NewsPreferencesUtils.getPreferredSources(context).toArray().length;

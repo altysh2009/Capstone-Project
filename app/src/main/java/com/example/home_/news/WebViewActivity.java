@@ -61,7 +61,7 @@ public class WebViewActivity extends AppCompatActivity {
         try {
             startActivityForResult(shareIntent, 0);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(WebViewActivity.this, "You haven't installed google+ on your device", Toast.LENGTH_SHORT).show();
+            Toast.makeText(WebViewActivity.this, getString(R.string.toast_gmail), Toast.LENGTH_SHORT).show();
         }
 
     }

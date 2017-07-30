@@ -15,11 +15,12 @@
         android:background="#09C"
         android:contentDescription="@string/appwidget_text"
 
+        android:elevation="4dp"
 
         android:paddingEnd="0dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="0dp"
+
         android:paddingStart="8dp"
+
         android:text="@string/appwidget_text"
         android:textColor="#ffffff"
         android:textSize="24sp"
@@ -31,9 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+
         android:paddingEnd="0dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="0dp"
         android:paddingStart="8dp"
         tools:listitem="@layout/news_widget_item" />
 
@@ -41,9 +41,8 @@
         android:id="@+id/appwidget_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:paddingEnd="0dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="0dp"
         android:paddingStart="8dp"
         android:text="@string/appwidget_error"
         android:textSize="24sp"
